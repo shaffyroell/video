@@ -1,6 +1,7 @@
 import { Composition } from "remotion";
 import { HelloWorld, myCompSchema } from "./HelloWorld";
 import { Logo, myCompSchema2 } from "./HelloWorld/Logo";
+import { TechTower, techTowerSchema } from "./TechTower";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -39,6 +40,20 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           logoColor1: "#91dAE2" as const,
           logoColor2: "#86A8E7" as const,
+        }}
+      />
+
+      {/* TechTower - Animated sourcing system demo */}
+      <Composition
+        id="TechTower"
+        component={TechTower}
+        durationInFrames={300}
+        fps={30}
+        width={1920}
+        height={1080}
+        schema={techTowerSchema}
+        defaultProps={{
+          backgroundColor: "#f8fafc",
         }}
       />
     </>
