@@ -4,6 +4,7 @@ import {
   interpolate,
   useCurrentFrame,
   useVideoConfig,
+  Easing,
 } from "remotion";
 import { z } from "zod";
 import { EmailCard } from "./TechTower/EmailCard";
@@ -18,7 +19,6 @@ export const techTowerSchema = z.object({
 });
 
 const stages = [
-  "Sourcing system",
   "Analyzing signals",
   "Scoring fit with thesis",
   "Sharing result with team",
@@ -26,8 +26,11 @@ const stages = [
 ];
 
 // Scene timing (in frames at 30fps)
-const SCENE_1_END = 150; // First 5 stages with email cards (1 sec each)
-const SCENE_2_END = 300; // Deal created + CRM record
+const CARDS_PHASE = 60; // Cards come in + first text
+const TEXT_CHANGE = 90; // Second text appears
+const SYSTEM_APPEAR = 120; // System appears
+const SCENE_1_END = 240; // End of scene 1 (stages cycle)
+const SCENE_2_END = 390; // Deal created + CRM record
 
 export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   backgroundColor = "#f8fafc",
@@ -35,18 +38,11 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
 
-  // Calculate stage duration for first scene
-  const stageDuration = Math.floor(SCENE_1_END / stages.length);
-
-  // Header fade in
-  const headerOpacity = interpolate(frame, [0, 20], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+  // Calculate stage duration for the system animation
+  const stageDuration = Math.floor((SCENE_1_END - SYSTEM_APPEAR) / stages.length);
 
   // Determine fade state for email cards
-  const currentStage = Math.floor(frame / stageDuration);
-  const shouldFadeCards = currentStage >= 2;
+  const shouldFadeCards = frame >= SYSTEM_APPEAR;
 
   // Scene 1 fade out
   const scene1Opacity = interpolate(
@@ -81,6 +77,62 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
     }
   );
 
+  // Text above cards animations
+  const text1Opacity = interpolate(
+    frame,
+    [20, 35, TEXT_CHANGE - 15, TEXT_CHANGE],
+    [0, 1, 1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.out(Easing.cubic),
+    }
+  );
+
+  const text2Opacity = interpolate(
+    frame,
+    [TEXT_CHANGE, TEXT_CHANGE + 15, SYSTEM_APPEAR - 10, SYSTEM_APPEAR + 5],
+    [0, 1, 1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.out(Easing.cubic),
+    }
+  );
+
+  // System container animation
+  const systemOpacity = interpolate(
+    frame,
+    [SYSTEM_APPEAR, SYSTEM_APPEAR + 20],
+    [0, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  const systemScale = interpolate(
+    frame,
+    [SYSTEM_APPEAR, SYSTEM_APPEAR + 25],
+    [0.9, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.out(Easing.cubic),
+    }
+  );
+
+  // Text above system
+  const systemTextOpacity = interpolate(
+    frame,
+    [SYSTEM_APPEAR + 10, SYSTEM_APPEAR + 25],
+    [0, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
   return (
     <AbsoluteFill
       style={{
@@ -89,29 +141,18 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
-      {/* Header - always visible */}
+      {/* Header - TechTower logo only */}
       <div
         style={{
           position: "absolute",
           top: 60,
-          left: 80,
           right: 80,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          opacity: headerOpacity,
+          opacity: interpolate(frame, [0, 20], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
         }}
       >
-        <div
-          style={{
-            fontSize: 28,
-            color: "#64748b",
-            fontWeight: 400,
-            maxWidth: 700,
-          }}
-        >
-          Forward emails or set up custom automated signals to track
-        </div>
         <div
           style={{
             fontSize: 28,
@@ -129,58 +170,123 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
         <div
           style={{
             position: "absolute",
-            top: 140,
+            top: 100,
             left: 80,
             right: 80,
             bottom: 40,
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: "column",
             opacity: scene1Opacity,
           }}
         >
-          {/* Left side - Email cards */}
-          <div style={{ flex: 1, maxWidth: 520 }}>
-            <EmailCard
-              icon="email"
-              title="FWD: Founder Linkedin"
-              description="Hey – have a look at this founder's Linkedin, think they're raising soon"
-              to="deals@your-workflow.ai"
-              delay={20}
-              fadeOut={shouldFadeCards}
-              fadeOutStart={stageDuration * 2}
-            />
-            <EmailCard
-              icon="lightning"
-              title="Raised pre-seed round 12m ago"
-              description="Signal detected&#10;Pre-Seed round raised · 12 months ago&#10;· may raise soon"
-              to="deals@your-workflow.ai"
-              delay={35}
-              fadeOut={shouldFadeCards}
-              fadeOutStart={stageDuration * 2}
-            />
-            <EmailCard
-              icon="email"
-              title="FWD: Pitch Deck"
-              description="Received this deck, let me know if I should get in touch with the founder."
-              to="deals@your-workflow.ai"
-              attachment="PitchDeck.pdf"
-              delay={50}
-              fadeOut={shouldFadeCards}
-              fadeOutStart={stageDuration * 2}
-            />
+          {/* Animated text above cards */}
+          <div
+            style={{
+              height: 60,
+              marginBottom: 20,
+              position: "relative",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                opacity: text1Opacity,
+                fontSize: 28,
+                color: "#1e293b",
+                fontWeight: 500,
+              }}
+            >
+              Signals are pushed to the sourcing system
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                opacity: text2Opacity,
+                fontSize: 28,
+                color: "#1e293b",
+                fontWeight: 500,
+              }}
+            >
+              Set up automated tracking signals
+            </div>
           </div>
 
-          {/* Right side - Stage text */}
+          {/* Main content area */}
           <div
             style={{
               flex: 1,
               display: "flex",
+              justifyContent: "space-between",
               alignItems: "center",
-              justifyContent: "center",
             }}
           >
-            <StageText stages={stages} stageDuration={stageDuration} />
+            {/* Left side - Email cards */}
+            <div style={{ flex: 1, maxWidth: 520 }}>
+              <EmailCard
+                icon="email"
+                title="FWD: Founder Linkedin"
+                description="Hey – have a look at this founder's Linkedin, think they're raising soon"
+                to="deals@your-workflow.ai"
+                delay={10}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={SYSTEM_APPEAR}
+              />
+              <EmailCard
+                icon="lightning"
+                title="Raised pre-seed round 12m ago"
+                description="Signal detected · Pre-Seed round raised · 12 months ago · may raise soon"
+                to="deals@your-workflow.ai"
+                delay={20}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={SYSTEM_APPEAR}
+              />
+              <EmailCard
+                icon="email"
+                title="FWD: Pitch Deck"
+                description="Received this deck, let me know if I should get in touch with the founder."
+                to="deals@your-workflow.ai"
+                attachment="PitchDeck.pdf"
+                delay={30}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={SYSTEM_APPEAR}
+              />
+              <EmailCard
+                icon="linkedin"
+                title="LinkedIn invite received from founder"
+                description="Connection request · Sarah Chen, CEO at TechStartup · 2nd degree connection"
+                to="deals@your-workflow.ai"
+                delay={40}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={SYSTEM_APPEAR}
+              />
+            </div>
+
+            {/* Right side - Stage text (appears after cards) */}
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: systemOpacity,
+                transform: `scale(${systemScale})`,
+              }}
+            >
+              {/* Text above system */}
+              <div
+                style={{
+                  marginBottom: 24,
+                  opacity: systemTextOpacity,
+                  fontSize: 20,
+                  color: "#64748b",
+                  fontWeight: 500,
+                }}
+              >
+                Custom workflow to analyze fit
+              </div>
+              <StageText stages={stages} stageDuration={stageDuration} startFrame={SYSTEM_APPEAR} />
+            </div>
           </div>
         </div>
       )}

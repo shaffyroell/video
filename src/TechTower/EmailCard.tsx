@@ -2,7 +2,7 @@ import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
 interface EmailCardProps {
-  icon: "email" | "lightning" | "attachment";
+  icon: "email" | "lightning" | "attachment" | "linkedin";
   title: string;
   description: string;
   to: string;
@@ -58,6 +58,20 @@ export const EmailCard: React.FC<EmailCardProps> = ({
             fill="#fbbf24"
             stroke="#f59e0b"
             strokeWidth="1"
+          />
+        </svg>
+      );
+    }
+    if (icon === "linkedin") {
+      return (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="2" width="20" height="20" rx="2" fill="#0077B5" />
+          <path
+            d="M7 10V17M7 7V7.01M11 17V13C11 12 12 11 13.5 11C15 11 16 12 16 13V17M11 10V17"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       );

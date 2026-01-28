@@ -4,35 +4,26 @@ import { interpolate, useCurrentFrame, Easing } from "remotion";
 interface StageTextProps {
   stages: string[];
   stageDuration: number;
+  startFrame?: number;
 }
 
-export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) => {
+export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration, startFrame = 0 }) => {
   const frame = useCurrentFrame();
+  const adjustedFrame = Math.max(0, frame - startFrame);
 
   // Determine which stage we're on
   const currentStageIndex = Math.min(
-    Math.floor(frame / stageDuration),
+    Math.floor(adjustedFrame / stageDuration),
     stages.length - 1
   );
 
-  const stageFrame = frame - currentStageIndex * stageDuration;
+  const stageFrame = adjustedFrame - currentStageIndex * stageDuration;
 
-  // Glow animation - subtle pulse for the outer glow
+  // Subtle glow animation - very subtle pulse
   const glowOpacity = interpolate(
     frame % 90,
     [0, 45, 90],
-    [0.15, 0.25, 0.15],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }
-  );
-
-  // Subtle scale pulse for the container
-  const containerScale = interpolate(
-    frame % 90,
-    [0, 45, 90],
-    [1, 1.01, 1],
+    [0.06, 0.1, 0.06],
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
@@ -48,23 +39,23 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
         justifyContent: "center",
       }}
     >
-      {/* Outer glow - creates the "gravity point" effect */}
+      {/* Outer glow - subtle gray */}
       <div
         style={{
           position: "absolute",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 450,
-          height: 280,
-          background: `radial-gradient(ellipse at center, rgba(59, 130, 246, ${glowOpacity}) 0%, rgba(147, 197, 253, ${glowOpacity * 0.5}) 40%, transparent 70%)`,
-          filter: "blur(40px)",
+          width: 420,
+          height: 260,
+          background: `radial-gradient(ellipse at center, rgba(30, 41, 59, ${glowOpacity}) 0%, rgba(100, 116, 139, ${glowOpacity * 0.4}) 40%, transparent 70%)`,
+          filter: "blur(35px)",
           pointerEvents: "none",
           zIndex: 0,
         }}
       />
 
-      {/* System container - the main oval card */}
+      {/* System container - oval card with reduced shadow */}
       <div
         style={{
           position: "relative",
@@ -73,35 +64,33 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: "40px 60px",
+          padding: "36px 56px",
           borderRadius: 100,
-          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%)",
+          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%)",
           boxShadow: `
-            0 4px 24px rgba(59, 130, 246, 0.12),
-            0 8px 48px rgba(59, 130, 246, 0.08),
-            0 0 0 1px rgba(59, 130, 246, 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8)
+            0 2px 12px rgba(0, 0, 0, 0.06),
+            0 4px 24px rgba(0, 0, 0, 0.04),
+            0 0 0 1px rgba(0, 0, 0, 0.04)
           `,
-          transform: `scale(${containerScale})`,
-          minWidth: 380,
+          minWidth: 360,
         }}
       >
-        {/* Sourcing system label */}
+        {/* Sourcing system label - black/dark gray */}
         <div
           style={{
-            fontSize: 16,
-            color: "#3b82f6",
+            fontSize: 14,
+            color: "#1e293b",
             letterSpacing: 1.5,
             fontWeight: 600,
             textTransform: "uppercase",
-            marginBottom: 16,
+            marginBottom: 14,
           }}
         >
           · Sourcing system ·
         </div>
 
         {/* Animated stage text */}
-        <div style={{ position: "relative", height: 44, minWidth: 300 }}>
+        <div style={{ position: "relative", height: 40, minWidth: 280 }}>
           {stages.map((stage, index) => {
             const isActive = index === currentStageIndex;
             const isPast = index < currentStageIndex;
@@ -109,7 +98,7 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
             // Animation for entering
             const enterProgress = interpolate(
               stageFrame,
-              [0, 20],
+              [0, 18],
               [0, 1],
               {
                 extrapolateLeft: "clamp",
@@ -120,10 +109,10 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
 
             // Animation for exiting
             const exitProgress =
-              index === currentStageIndex && stageFrame > stageDuration - 20
+              index === currentStageIndex && stageFrame > stageDuration - 18
                 ? interpolate(
                     stageFrame,
-                    [stageDuration - 20, stageDuration],
+                    [stageDuration - 18, stageDuration],
                     [0, 1],
                     {
                       extrapolateLeft: "clamp",
@@ -135,8 +124,8 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
             const opacity = isActive ? enterProgress * (1 - exitProgress) : isPast ? 0 : 0;
 
             const translateY = isActive
-              ? interpolate(enterProgress, [0, 1], [15, 0]) +
-                interpolate(exitProgress, [0, 1], [0, -15])
+              ? interpolate(enterProgress, [0, 1], [12, 0]) +
+                interpolate(exitProgress, [0, 1], [0, -12])
               : 0;
 
             // Highlight the first word
@@ -152,7 +141,7 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
                   left: "50%",
                   transform: `translateX(-50%) translateY(${translateY}px)`,
                   opacity,
-                  fontSize: 28,
+                  fontSize: 26,
                   fontWeight: 500,
                   color: "#64748b",
                   whiteSpace: "nowrap",
