@@ -28,15 +28,15 @@ const stages = [
 
 // Scene timing (in frames at 30fps)
 // New Scene 1 timing:
-// - Cards animate in: 0-60 (2 seconds)
-// - Text 1 appears: 60-105 (1.5 seconds)
-// - Text 2 appears: 105-135 (1 second)
-// - Sourcing system appears: 135+
-const CARDS_SETTLE = 60; // 2 seconds for cards to come in
+// - Cards animate in one by one: 0-90 (cards at 10, 30, 50, 70 delay)
+// - Text 1 appears: 90+ for 2 seconds
+// - Text 2 appears: after text 1 for 2 seconds
+// - Sourcing system appears after texts
+const CARDS_SETTLE = 90; // Cards finish animating
 const TEXT_1_START = CARDS_SETTLE;
-const TEXT_1_DURATION = 45; // 1.5 seconds
+const TEXT_1_DURATION = 60; // 2 seconds
 const TEXT_2_START = TEXT_1_START + TEXT_1_DURATION + 15; // Small gap after text 1 fades
-const TEXT_2_DURATION = 30; // 1 second
+const TEXT_2_DURATION = 60; // 2 seconds
 const SOURCING_START = TEXT_2_START + TEXT_2_DURATION + 15; // After text 2 fades
 
 const SCENE_1_END = 300; // First 5 stages with email cards
@@ -181,7 +181,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
               justifyContent: "space-between",
             }}
           >
-            {/* Left side - Email cards (4 cards) */}
+            {/* Left side - Email cards (4 cards, coming in one by one) */}
             <div style={{ flex: 1, maxWidth: 450 }}>
               <EmailCard
                 icon="email"
@@ -197,7 +197,16 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
                 title="Raised pre-seed round 12m ago"
                 description="Signal detected · Pre-Seed round raised · 12 months ago · may raise soon"
                 to="deals@your-workflow.ai"
-                delay={20}
+                delay={30}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={stageDuration * 2}
+              />
+              <EmailCard
+                icon="message"
+                title="WhatsApp: Intro to founder"
+                description="Hey, wanted to connect you with Sarah from TechCo – she's building something interesting"
+                to="deals@your-workflow.ai"
+                delay={50}
                 fadeOut={shouldFadeCards}
                 fadeOutStart={stageDuration * 2}
               />
@@ -207,16 +216,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
                 description="Received this deck, let me know if I should get in touch with the founder."
                 to="deals@your-workflow.ai"
                 attachment="PitchDeck.pdf"
-                delay={30}
-                fadeOut={shouldFadeCards}
-                fadeOutStart={stageDuration * 2}
-              />
-              <EmailCard
-                icon="lightning"
-                title="New funding announcement"
-                description="Company XYZ just announced Series A · Potential competitor or partner"
-                to="deals@your-workflow.ai"
-                delay={40}
+                delay={70}
                 fadeOut={shouldFadeCards}
                 fadeOutStart={stageDuration * 2}
               />
