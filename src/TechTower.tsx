@@ -175,8 +175,9 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
             style={{
               flex: 1,
               display: "flex",
-              alignItems: "center",
+              alignItems: "flex-start",
               justifyContent: "center",
+              paddingTop: 120,
             }}
           >
             <StageText stages={stages} stageDuration={stageDuration} />
