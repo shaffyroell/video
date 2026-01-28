@@ -26,11 +26,14 @@ const stages = [
 ];
 
 // Scene timing (in frames at 30fps)
-const CARDS_PHASE = 60; // Cards come in + first text
-const TEXT_CHANGE = 90; // Second text appears
-const SYSTEM_APPEAR = 120; // System appears
-const SCENE_1_END = 240; // End of scene 1 (stages cycle)
-const SCENE_2_END = 390; // Deal created + CRM record
+// Cards: 1 sec (30 frames) apart - delays 10, 40, 70, 100
+// Last card finishes animating around frame 120
+const TEXT_1_START = 130; // First text appears after cards
+const TEXT_1_END = 190; // First text stays 2 sec (60 frames)
+const TEXT_2_END = 250; // Second text stays 2 sec (60 frames)
+const SYSTEM_APPEAR = 260; // System appears after texts
+const SCENE_1_END = 380; // End of scene 1 (stages cycle)
+const SCENE_2_END = 530; // Deal created + CRM record
 
 export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   backgroundColor = "#f8fafc",
@@ -77,10 +80,10 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
     }
   );
 
-  // Text above cards animations
+  // Text above cards animations (appear after cards, 2 sec each)
   const text1Opacity = interpolate(
     frame,
-    [20, 35, TEXT_CHANGE - 15, TEXT_CHANGE],
+    [TEXT_1_START, TEXT_1_START + 15, TEXT_1_END - 15, TEXT_1_END],
     [0, 1, 1, 0],
     {
       extrapolateLeft: "clamp",
@@ -91,7 +94,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
 
   const text2Opacity = interpolate(
     frame,
-    [TEXT_CHANGE, TEXT_CHANGE + 15, SYSTEM_APPEAR - 10, SYSTEM_APPEAR + 5],
+    [TEXT_1_END, TEXT_1_END + 15, TEXT_2_END - 15, TEXT_2_END],
     [0, 1, 1, 0],
     {
       extrapolateLeft: "clamp",
@@ -223,7 +226,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
             {/* Left side - Email cards */}
             <div style={{ flex: 1, maxWidth: 520 }}>
               <EmailCard
-                icon="email"
+                icon="whatsapp"
                 title="FWD: Founder Linkedin"
                 description="Hey – have a look at this founder's Linkedin, think they're raising soon"
                 to="deals@your-workflow.ai"
@@ -236,7 +239,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
                 title="Raised pre-seed round 12m ago"
                 description="Signal detected · Pre-Seed round raised · 12 months ago · may raise soon"
                 to="deals@your-workflow.ai"
-                delay={20}
+                delay={40}
                 fadeOut={shouldFadeCards}
                 fadeOutStart={SYSTEM_APPEAR}
               />
@@ -246,7 +249,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
                 description="Received this deck, let me know if I should get in touch with the founder."
                 to="deals@your-workflow.ai"
                 attachment="PitchDeck.pdf"
-                delay={30}
+                delay={70}
                 fadeOut={shouldFadeCards}
                 fadeOutStart={SYSTEM_APPEAR}
               />
@@ -255,7 +258,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
                 title="LinkedIn invite received from founder"
                 description="Connection request · Sarah Chen, CEO at TechStartup · 2nd degree connection"
                 to="deals@your-workflow.ai"
-                delay={40}
+                delay={100}
                 fadeOut={shouldFadeCards}
                 fadeOutStart={SYSTEM_APPEAR}
               />
