@@ -26,8 +26,8 @@ const stages = [
 ];
 
 // Scene timing (in frames at 30fps)
-const SCENE_1_END = 300; // First 5 stages with email cards
-const SCENE_2_END = 450; // Deal created + CRM record
+const SCENE_1_END = 150; // First 5 stages with email cards (1 sec each)
+const SCENE_2_END = 300; // Deal created + CRM record
 
 export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   backgroundColor = "#f8fafc",
@@ -139,7 +139,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
           }}
         >
           {/* Left side - Email cards */}
-          <div style={{ flex: 1, maxWidth: 450 }}>
+          <div style={{ flex: 1, maxWidth: 520 }}>
             <EmailCard
               icon="email"
               title="FWD: Founder Linkedin"

@@ -44,7 +44,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({
   const renderIcon = () => {
     if (icon === "email") {
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
           <rect x="2" y="4" width="20" height="16" rx="2" stroke="#94a3b8" strokeWidth="2" />
           <path d="M2 7L12 13L22 7" stroke="#94a3b8" strokeWidth="2" />
         </svg>
@@ -52,7 +52,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({
     }
     if (icon === "lightning") {
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
           <path
             d="M13 2L3 14H12L11 22L21 10H12L13 2Z"
             fill="#fbbf24"
@@ -63,7 +63,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({
       );
     }
     return (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
         <rect x="2" y="4" width="20" height="16" rx="2" stroke="#94a3b8" strokeWidth="2" />
         <path d="M2 7L12 13L22 7" stroke="#94a3b8" strokeWidth="2" />
       </svg>
@@ -74,39 +74,39 @@ export const EmailCard: React.FC<EmailCardProps> = ({
     <div
       style={{
         backgroundColor: "white",
-        borderRadius: 12,
-        padding: 20,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
-        marginBottom: 16,
+        borderRadius: 16,
+        padding: 24,
+        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)",
+        marginBottom: 20,
         transform: `translateX(${slideIn}px)`,
         opacity: opacity * fadeOutOpacity,
-        width: 380,
+        width: 480,
       }}
     >
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-        <div style={{ marginTop: 2 }}>{renderIcon()}</div>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+        <div style={{ marginTop: 4 }}>{renderIcon()}</div>
         <div style={{ flex: 1 }}>
           <div
             style={{
-              fontSize: 18,
+              fontSize: 22,
               fontWeight: 600,
-              color: "#3b82f6",
-              marginBottom: 6,
+              color: "#1e293b",
+              marginBottom: 8,
             }}
           >
             {title}
           </div>
           <div
             style={{
-              fontSize: 14,
+              fontSize: 16,
               color: "#64748b",
-              lineHeight: 1.5,
-              marginBottom: 8,
+              lineHeight: 1.6,
+              marginBottom: 10,
             }}
           >
             {description}
           </div>
-          <div style={{ fontSize: 13, color: "#94a3b8" }}>To: {to}</div>
+          <div style={{ fontSize: 14, color: "#94a3b8" }}>To: {to}</div>
           {attachment && (
             <div
               style={{
