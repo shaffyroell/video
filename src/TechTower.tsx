@@ -14,7 +14,7 @@ import { ContactCard } from "./TechTower/ContactCard";
 import { DraftEmail } from "./TechTower/DraftEmail";
 
 export const techTowerSchema = z.object({
-  backgroundColor: z.string().default("#f8fafc"),
+  backgroundColor: z.string().default("#ff0000"),
 });
 
 const stages = [
@@ -89,6 +89,23 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
+      {/* BIG TEST - REMOVE AFTER CONFIRMING */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          fontSize: 120,
+          fontWeight: 900,
+          color: "white",
+          textShadow: "4px 4px 8px black",
+          zIndex: 9999,
+        }}
+      >
+        TEST CHANGE VISIBLE
+      </div>
+
       {/* Header - always visible */}
       <div
         style={{
