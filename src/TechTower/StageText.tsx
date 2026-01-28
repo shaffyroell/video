@@ -4,18 +4,26 @@ import { interpolate, useCurrentFrame, Easing } from "remotion";
 interface StageTextProps {
   stages: string[];
   stageDuration: number;
+  startDelay?: number;
 }
 
-export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) => {
+export const StageText: React.FC<StageTextProps> = ({
+  stages,
+  stageDuration,
+  startDelay = 0,
+}) => {
   const frame = useCurrentFrame();
+
+  // Adjust frame to account for start delay
+  const adjustedFrame = Math.max(0, frame - startDelay);
 
   // Determine which stage we're on
   const currentStageIndex = Math.min(
-    Math.floor(frame / stageDuration),
+    Math.floor(adjustedFrame / stageDuration),
     stages.length - 1
   );
 
-  const stageFrame = frame - currentStageIndex * stageDuration;
+  const stageFrame = adjustedFrame - currentStageIndex * stageDuration;
 
   return (
     <div

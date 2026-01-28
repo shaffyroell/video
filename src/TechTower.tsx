@@ -12,6 +12,7 @@ import { DealCreated } from "./TechTower/DealCreated";
 import { CRMRecord } from "./TechTower/CRMRecord";
 import { ContactCard } from "./TechTower/ContactCard";
 import { DraftEmail } from "./TechTower/DraftEmail";
+import { AnimatedText } from "./TechTower/AnimatedText";
 
 export const techTowerSchema = z.object({
   backgroundColor: z.string().default("#f8fafc"),
@@ -26,6 +27,18 @@ const stages = [
 ];
 
 // Scene timing (in frames at 30fps)
+// New Scene 1 timing:
+// - Cards animate in: 0-60 (2 seconds)
+// - Text 1 appears: 60-105 (1.5 seconds)
+// - Text 2 appears: 105-135 (1 second)
+// - Sourcing system appears: 135+
+const CARDS_SETTLE = 60; // 2 seconds for cards to come in
+const TEXT_1_START = CARDS_SETTLE;
+const TEXT_1_DURATION = 45; // 1.5 seconds
+const TEXT_2_START = TEXT_1_START + TEXT_1_DURATION + 15; // Small gap after text 1 fades
+const TEXT_2_DURATION = 30; // 1 second
+const SOURCING_START = TEXT_2_START + TEXT_2_DURATION + 15; // After text 2 fades
+
 const SCENE_1_END = 300; // First 5 stages with email cards
 const SCENE_2_END = 450; // Deal created + CRM record
 
@@ -124,62 +137,115 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
         </div>
       </div>
 
-      {/* Scene 1: Email cards + Stage text */}
+      {/* Scene 1: Email cards + Animated texts + Stage text */}
       {frame < SCENE_1_END + 30 && (
         <div
           style={{
             position: "absolute",
-            top: 180,
+            top: 140,
             left: 80,
             right: 80,
             bottom: 80,
             display: "flex",
-            justifyContent: "space-between",
+            flexDirection: "column",
             opacity: scene1Opacity,
           }}
         >
-          {/* Left side - Email cards */}
-          <div style={{ flex: 1, maxWidth: 450 }}>
-            <EmailCard
-              icon="email"
-              title="FWD: Founder Linkedin"
-              description="Hey – have a look at this founder's Linkedin, think they're raising soon"
-              to="deals@your-workflow.ai"
-              delay={20}
-              fadeOut={shouldFadeCards}
-              fadeOutStart={stageDuration * 2}
+          {/* Animated text overlay above cards */}
+          <div
+            style={{
+              height: 80,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 20,
+            }}
+          >
+            <AnimatedText
+              text="Workflow for inbound and outbound sourcing"
+              startFrame={TEXT_1_START}
+              duration={TEXT_1_DURATION}
             />
-            <EmailCard
-              icon="lightning"
-              title="Raised pre-seed round 12m ago"
-              description="Signal detected&#10;Pre-Seed round raised · 12 months ago&#10;· may raise soon"
-              to="deals@your-workflow.ai"
-              delay={35}
-              fadeOut={shouldFadeCards}
-              fadeOutStart={stageDuration * 2}
-            />
-            <EmailCard
-              icon="email"
-              title="FWD: Pitch Deck"
-              description="Received this deck, let me know if I should get in touch with the founder."
-              to="deals@your-workflow.ai"
-              attachment="PitchDeck.pdf"
-              delay={50}
-              fadeOut={shouldFadeCards}
-              fadeOutStart={stageDuration * 2}
+            <AnimatedText
+              text="All signals are pushed to the system"
+              startFrame={TEXT_2_START}
+              duration={TEXT_2_DURATION}
             />
           </div>
 
-          {/* Right side - Stage text */}
+          {/* Main content area */}
           <div
             style={{
               flex: 1,
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "space-between",
             }}
           >
-            <StageText stages={stages} stageDuration={stageDuration} />
+            {/* Left side - Email cards (4 cards) */}
+            <div style={{ flex: 1, maxWidth: 450 }}>
+              <EmailCard
+                icon="email"
+                title="FWD: Founder Linkedin"
+                description="Hey – have a look at this founder's Linkedin, think they're raising soon"
+                to="deals@your-workflow.ai"
+                delay={10}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={stageDuration * 2}
+              />
+              <EmailCard
+                icon="lightning"
+                title="Raised pre-seed round 12m ago"
+                description="Signal detected · Pre-Seed round raised · 12 months ago · may raise soon"
+                to="deals@your-workflow.ai"
+                delay={20}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={stageDuration * 2}
+              />
+              <EmailCard
+                icon="email"
+                title="FWD: Pitch Deck"
+                description="Received this deck, let me know if I should get in touch with the founder."
+                to="deals@your-workflow.ai"
+                attachment="PitchDeck.pdf"
+                delay={30}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={stageDuration * 2}
+              />
+              <EmailCard
+                icon="lightning"
+                title="New funding announcement"
+                description="Company XYZ just announced Series A · Potential competitor or partner"
+                to="deals@your-workflow.ai"
+                delay={40}
+                fadeOut={shouldFadeCards}
+                fadeOutStart={stageDuration * 2}
+              />
+            </div>
+
+            {/* Right side - Stage text (appears after text animations) */}
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: interpolate(
+                  frame,
+                  [SOURCING_START, SOURCING_START + 20],
+                  [0, 1],
+                  {
+                    extrapolateLeft: "clamp",
+                    extrapolateRight: "clamp",
+                  }
+                ),
+              }}
+            >
+              <StageText
+                stages={stages}
+                stageDuration={stageDuration}
+                startDelay={SOURCING_START}
+              />
+            </div>
           </div>
         </div>
       )}
