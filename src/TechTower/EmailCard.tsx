@@ -10,6 +10,7 @@ interface EmailCardProps {
   delay: number;
   fadeOut?: boolean;
   fadeOutStart?: number;
+  verticalOffset?: number; // Subtle stagger offset in pixels
 }
 
 export const EmailCard: React.FC<EmailCardProps> = ({
@@ -21,6 +22,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({
   delay,
   fadeOut = false,
   fadeOutStart = 180,
+  verticalOffset = 0,
 }) => {
   const frame = useCurrentFrame();
 
@@ -41,18 +43,21 @@ export const EmailCard: React.FC<EmailCardProps> = ({
       })
     : 1;
 
+  // Icon size ~10% smaller (24 → 22)
+  const iconSize = 22;
+
   const renderIcon = () => {
     if (icon === "email") {
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="4" width="20" height="16" rx="2" stroke="#94a3b8" strokeWidth="2" />
-          <path d="M2 7L12 13L22 7" stroke="#94a3b8" strokeWidth="2" />
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="4" width="20" height="16" rx="2" stroke="#a1aab8" strokeWidth="2" />
+          <path d="M2 7L12 13L22 7" stroke="#a1aab8" strokeWidth="2" />
         </svg>
       );
     }
     if (icon === "lightning") {
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
           <path
             d="M13 2L3 14H12L11 22L21 10H12L13 2Z"
             fill="#fbbf24"
@@ -63,9 +68,9 @@ export const EmailCard: React.FC<EmailCardProps> = ({
       );
     }
     return (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <rect x="2" y="4" width="20" height="16" rx="2" stroke="#94a3b8" strokeWidth="2" />
-        <path d="M2 7L12 13L22 7" stroke="#94a3b8" strokeWidth="2" />
+      <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+        <rect x="2" y="4" width="20" height="16" rx="2" stroke="#a1aab8" strokeWidth="2" />
+        <path d="M2 7L12 13L22 7" stroke="#a1aab8" strokeWidth="2" />
       </svg>
     );
   };
@@ -74,11 +79,11 @@ export const EmailCard: React.FC<EmailCardProps> = ({
     <div
       style={{
         backgroundColor: "white",
-        borderRadius: 12,
+        borderRadius: 16, // Increased corner radius (was 12)
         padding: 20,
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
-        marginBottom: 16,
-        transform: `translateX(${slideIn}px)`,
+        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.05)", // Reduced shadow (~40% less)
+        marginBottom: 20, // Increased spacing (was 16)
+        transform: `translateX(${slideIn}px) translateY(${verticalOffset}px)`,
         opacity: opacity * fadeOutOpacity,
         width: 380,
       }}
@@ -99,14 +104,14 @@ export const EmailCard: React.FC<EmailCardProps> = ({
           <div
             style={{
               fontSize: 14,
-              color: "#64748b",
+              color: "#78859b", // Lower contrast (was #64748b)
               lineHeight: 1.5,
               marginBottom: 8,
             }}
           >
             {description}
           </div>
-          <div style={{ fontSize: 13, color: "#94a3b8" }}>To: {to}</div>
+          <div style={{ fontSize: 13, color: "#a1aab8" }}>To: {to}</div>
           {attachment && (
             <div
               style={{
@@ -116,19 +121,19 @@ export const EmailCard: React.FC<EmailCardProps> = ({
                 gap: 8,
                 backgroundColor: "#f8fafc",
                 padding: "8px 12px",
-                borderRadius: 6,
+                borderRadius: 8, // Slightly more rounded
                 width: "fit-content",
               }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
-                  stroke="#94a3b8"
+                  stroke="#a1aab8"
                   strokeWidth="2"
                   fill="#f1f5f9"
                 />
               </svg>
-              <span style={{ fontSize: 13, color: "#64748b" }}>{attachment}</span>
+              <span style={{ fontSize: 13, color: "#78859b" }}>{attachment}</span>
             </div>
           )}
         </div>

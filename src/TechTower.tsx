@@ -94,20 +94,22 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
         style={{
           position: "absolute",
           top: 60,
-          left: 80,
-          right: 80,
+          left: 90, // +10px padding from edge
+          right: 90, // +10px padding from edge
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           opacity: headerOpacity,
         }}
       >
+        {/* Helper text - de-emphasized: smaller, lower opacity, contextual */}
         <div
           style={{
-            fontSize: 28,
-            color: "#64748b",
+            fontSize: 24, // Smaller (was 28)
+            color: "#94a3b8", // Lower opacity/lighter color
             fontWeight: 400,
-            maxWidth: 700,
+            maxWidth: 650,
+            opacity: 0.85, // Slightly reduced opacity
           }}
         >
           Forward emails or set up custom automated signals to track
@@ -138,7 +140,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
             opacity: scene1Opacity,
           }}
         >
-          {/* Left side - Email cards */}
+          {/* Left side - Email cards with subtle stagger for organic feel */}
           <div style={{ flex: 1, maxWidth: 450 }}>
             <EmailCard
               icon="email"
@@ -148,6 +150,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
               delay={20}
               fadeOut={shouldFadeCards}
               fadeOutStart={stageDuration * 2}
+              verticalOffset={0}
             />
             <EmailCard
               icon="lightning"
@@ -157,6 +160,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
               delay={35}
               fadeOut={shouldFadeCards}
               fadeOutStart={stageDuration * 2}
+              verticalOffset={3} // Subtle 3px stagger
             />
             <EmailCard
               icon="email"
@@ -167,6 +171,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
               delay={50}
               fadeOut={shouldFadeCards}
               fadeOutStart={stageDuration * 2}
+              verticalOffset={-2} // Subtle -2px stagger
             />
           </div>
 
