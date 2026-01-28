@@ -26,14 +26,15 @@ const stages = [
 ];
 
 // Scene timing (in frames at 30fps)
-// Cards: 1 sec (30 frames) apart - delays 10, 40, 70, 100
-// Last card finishes animating around frame 120
-const TEXT_1_START = 130; // First text appears after cards
-const TEXT_1_END = 190; // First text stays 2 sec (60 frames)
-const TEXT_2_END = 250; // Second text stays 2 sec (60 frames)
-const SYSTEM_APPEAR = 260; // System appears after texts
-const SCENE_1_END = 380; // End of scene 1 (stages cycle)
-const SCENE_2_END = 530; // Deal created + CRM record
+// Cards: 1.5 sec (45 frames) apart - delays 10, 55, 100, 145
+// Last card finishes animating around frame 175
+const TEXT_1_START = 185; // First text appears after cards
+const TEXT_1_END = 245; // First text stays 2 sec (60 frames)
+const TEXT_2_END = 335; // Second text stays 3 sec (90 frames - 1 sec longer)
+const SYSTEM_APPEAR = 345; // System appears after texts
+const CARDS_SLIDE_OUT = 355; // Cards start sliding into system
+const SCENE_1_END = 480; // End of scene 1 (stages cycle)
+const SCENE_2_END = 630; // Deal created + CRM record
 
 export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   backgroundColor = "#f8fafc",
@@ -226,22 +227,24 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
             {/* Left side - Email cards */}
             <div style={{ flex: 1, maxWidth: 520 }}>
               <EmailCard
-                icon="whatsapp"
+                icon="message"
                 title="FWD: Founder Linkedin"
                 description="Hey – have a look at this founder's Linkedin, think they're raising soon"
                 to="deals@your-workflow.ai"
                 delay={10}
-                fadeOut={shouldFadeCards}
-                fadeOutStart={SYSTEM_APPEAR}
+                slideOut={shouldFadeCards}
+                slideOutStart={CARDS_SLIDE_OUT}
+                slideOutIndex={0}
               />
               <EmailCard
                 icon="lightning"
                 title="Raised pre-seed round 12m ago"
                 description="Signal detected · Pre-Seed round raised · 12 months ago · may raise soon"
                 to="deals@your-workflow.ai"
-                delay={40}
-                fadeOut={shouldFadeCards}
-                fadeOutStart={SYSTEM_APPEAR}
+                delay={55}
+                slideOut={shouldFadeCards}
+                slideOutStart={CARDS_SLIDE_OUT}
+                slideOutIndex={1}
               />
               <EmailCard
                 icon="email"
@@ -249,18 +252,20 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
                 description="Received this deck, let me know if I should get in touch with the founder."
                 to="deals@your-workflow.ai"
                 attachment="PitchDeck.pdf"
-                delay={70}
-                fadeOut={shouldFadeCards}
-                fadeOutStart={SYSTEM_APPEAR}
+                delay={100}
+                slideOut={shouldFadeCards}
+                slideOutStart={CARDS_SLIDE_OUT}
+                slideOutIndex={2}
               />
               <EmailCard
                 icon="linkedin"
                 title="LinkedIn invite received from founder"
                 description="Connection request · Sarah Chen, CEO at TechStartup · 2nd degree connection"
                 to="deals@your-workflow.ai"
-                delay={100}
-                fadeOut={shouldFadeCards}
-                fadeOutStart={SYSTEM_APPEAR}
+                delay={145}
+                slideOut={shouldFadeCards}
+                slideOutStart={CARDS_SLIDE_OUT}
+                slideOutIndex={3}
               />
             </div>
 

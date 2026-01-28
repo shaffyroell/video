@@ -2,7 +2,7 @@ import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
 interface EmailCardProps {
-  icon: "email" | "lightning" | "attachment" | "linkedin" | "whatsapp";
+  icon: "email" | "lightning" | "attachment" | "linkedin" | "message";
   title: string;
   description: string;
   to: string;
@@ -10,6 +10,9 @@ interface EmailCardProps {
   delay: number;
   fadeOut?: boolean;
   fadeOutStart?: number;
+  slideOut?: boolean;
+  slideOutStart?: number;
+  slideOutIndex?: number;
 }
 
 export const EmailCard: React.FC<EmailCardProps> = ({
@@ -21,18 +24,40 @@ export const EmailCard: React.FC<EmailCardProps> = ({
   delay,
   fadeOut = false,
   fadeOutStart = 180,
+  slideOut = false,
+  slideOutStart = 260,
+  slideOutIndex = 0,
 }) => {
   const frame = useCurrentFrame();
 
-  const slideIn = interpolate(frame - delay, [0, 20], [50, 0], {
+  // Stagger the slide out - each card slides 15 frames after the previous
+  const cardSlideOutStart = slideOutStart + slideOutIndex * 15;
+
+  const slideIn = interpolate(frame - delay, [0, 30], [50, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  const opacity = interpolate(frame - delay, [0, 15], [0, 1], {
+  // Slide out to the right (into the sourcing system)
+  const slideOutX = slideOut
+    ? interpolate(frame, [cardSlideOutStart, cardSlideOutStart + 25], [0, 600], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 0;
+
+  const opacity = interpolate(frame - delay, [0, 20], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
+
+  // Fade out as card slides away
+  const slideOutOpacity = slideOut
+    ? interpolate(frame, [cardSlideOutStart, cardSlideOutStart + 25], [1, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 1;
 
   const fadeOutOpacity = fadeOut
     ? interpolate(frame, [fadeOutStart, fadeOutStart + 30], [1, 0.3], {
@@ -76,28 +101,22 @@ export const EmailCard: React.FC<EmailCardProps> = ({
         </svg>
       );
     }
-    if (icon === "whatsapp") {
+    if (icon === "message") {
       return (
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="2" width="20" height="20" rx="10" fill="#25D366" />
           <path
-            d="M17 14.5C17 14.5 15.5 15.5 15 15.5C14.5 15.5 14 15 13.5 14.5C13 14 12.5 13.5 12 13.5C11.5 13.5 10.5 14 10 14.5C9.5 15 9 15.5 8.5 15.5C8 15.5 7 14.5 7 14.5"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M8 8.5C8.5 8 9.5 7.5 10 8C10.5 8.5 10 9.5 10 10C10 10.5 10.5 11 11 11.5C11.5 12 12 12.5 12.5 12.5C13 12.5 14 12 14.5 11.5C15 11 15.5 10.5 16 10.5"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <path
-            d="M7 17L6 20L9 19"
-            stroke="white"
+            d="M21 11.5C21 16.19 16.97 20 12 20C10.82 20 9.69 19.82 8.65 19.48L3 21L4.52 15.35C4.18 14.31 4 13.18 4 12C4 7.03 7.81 3 12.5 3C17.19 3 21 6.81 21 11.5Z"
+            fill="#22C55E"
+            stroke="#16A34A"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
+          />
+          <path
+            d="M8 10H16M8 14H13"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
           />
         </svg>
       );
@@ -118,8 +137,8 @@ export const EmailCard: React.FC<EmailCardProps> = ({
         padding: 24,
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)",
         marginBottom: 20,
-        transform: `translateX(${slideIn}px)`,
-        opacity: opacity * fadeOutOpacity,
+        transform: `translateX(${slideIn + slideOutX}px)`,
+        opacity: opacity * fadeOutOpacity * slideOutOpacity,
         width: 480,
       }}
     >
