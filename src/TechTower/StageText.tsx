@@ -21,7 +21,7 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
   const glowOpacity = interpolate(
     frame % 120,
     [0, 60, 120],
-    [0.05, 0.08, 0.05],
+    [0.12, 0.18, 0.12],
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
@@ -44,11 +44,11 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
           position: "absolute",
           top: "50%",
           left: "50%",
-          transform: "translate(-50%, -40%)",
-          width: 400,
-          height: 300,
-          background: `radial-gradient(ellipse at center, rgba(100, 116, 139, ${glowOpacity}) 0%, rgba(100, 116, 139, ${glowOpacity * 0.5}) 30%, transparent 70%)`,
-          filter: "blur(40px)",
+          transform: "translate(-50%, -30%)",
+          width: 500,
+          height: 350,
+          background: `radial-gradient(ellipse at center, rgba(59, 130, 246, ${glowOpacity}) 0%, rgba(59, 130, 246, ${glowOpacity * 0.4}) 35%, transparent 70%)`,
+          filter: "blur(50px)",
           pointerEvents: "none",
           zIndex: 0,
         }}
