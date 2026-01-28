@@ -17,28 +17,59 @@ export const StageText: React.FC<StageTextProps> = ({ stages, stageDuration }) =
 
   const stageFrame = frame - currentStageIndex * stageDuration;
 
+  // Glow animation - subtle pulse
+  const glowOpacity = interpolate(
+    frame % 120,
+    [0, 60, 120],
+    [0.05, 0.08, 0.05],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        gap: 16,
+        gap: 20,
+        position: "relative",
       }}
     >
-      {/* Sourcing system label */}
+      {/* Radial glow behind content - gravity point effect */}
       <div
         style={{
-          fontSize: 16,
-          color: "#94a3b8",
-          letterSpacing: 0.5,
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -40%)",
+          width: 400,
+          height: 300,
+          background: `radial-gradient(ellipse at center, rgba(100, 116, 139, ${glowOpacity}) 0%, rgba(100, 116, 139, ${glowOpacity * 0.5}) 30%, transparent 70%)`,
+          filter: "blur(40px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Sourcing system label - strengthened presence */}
+      <div
+        style={{
+          fontSize: 18,
+          color: "#64748b",
+          letterSpacing: 0.8,
+          fontWeight: 500,
+          position: "relative",
+          zIndex: 1,
         }}
       >
         · Sourcing system
       </div>
 
       {/* Animated stage text */}
-      <div style={{ position: "relative", height: 50 }}>
+      <div style={{ position: "relative", height: 50, zIndex: 1 }}>
         {stages.map((stage, index) => {
           const isActive = index === currentStageIndex;
           const isPast = index < currentStageIndex;
