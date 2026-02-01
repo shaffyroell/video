@@ -13,6 +13,9 @@ import { DealCreated } from "./TechTower/DealCreated";
 import { CRMRecord } from "./TechTower/CRMRecord";
 import { ContactCard } from "./TechTower/ContactCard";
 import { DraftEmail } from "./TechTower/DraftEmail";
+import { LinkedInProfile } from "./TechTower/LinkedInProfile";
+import { LinkedInRequest } from "./TechTower/LinkedInRequest";
+import { OutreachEmail } from "./TechTower/OutreachEmail";
 
 export const techTowerSchema = z.object({
   backgroundColor: z.string().default("#f8fafc"),
@@ -34,7 +37,10 @@ const TEXT_2_END = 335; // Second text stays 3 sec (90 frames - 1 sec longer)
 const SYSTEM_APPEAR = 345; // System appears after texts
 const CARDS_SLIDE_OUT = 355; // Cards start sliding into system
 const SCENE_1_END = 480; // End of scene 1 (stages cycle)
-const SCENE_2_END = 630; // Deal created + CRM record
+const SCENE_2_END = 570; // Deal created + CRM record
+const SCENE_3_END = 660; // LinkedIn profile view
+const SCENE_4_END = 750; // LinkedIn request
+const SCENE_5_END = 840; // Outreach email
 
 export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   backgroundColor = "#f8fafc",
@@ -59,7 +65,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
     }
   );
 
-  // Scene 2 fade in/out
+  // Scene 2 fade in/out (Deal Created + CRM Record)
   const scene2Opacity = interpolate(
     frame,
     [SCENE_1_END, SCENE_1_END + 20, SCENE_2_END - 30, SCENE_2_END],
@@ -70,10 +76,43 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
     }
   );
 
-  // Scene 3 fade in and final fade out
+  // Scene 3 fade in/out (LinkedIn Profile)
   const scene3Opacity = interpolate(
     frame,
-    [SCENE_2_END, SCENE_2_END + 20, durationInFrames - 30, durationInFrames],
+    [SCENE_2_END, SCENE_2_END + 20, SCENE_3_END - 30, SCENE_3_END],
+    [0, 1, 1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  // Scene 4 fade in/out (LinkedIn Request)
+  const scene4Opacity = interpolate(
+    frame,
+    [SCENE_3_END, SCENE_3_END + 20, SCENE_4_END - 30, SCENE_4_END],
+    [0, 1, 1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  // Scene 5 fade in/out (Outreach Email)
+  const scene5Opacity = interpolate(
+    frame,
+    [SCENE_4_END, SCENE_4_END + 20, SCENE_5_END - 30, SCENE_5_END],
+    [0, 1, 1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }
+  );
+
+  // Scene 6 fade in and final fade out (Full view)
+  const scene6Opacity = interpolate(
+    frame,
+    [SCENE_5_END, SCENE_5_END + 20, durationInFrames - 30, durationInFrames],
     [0, 1, 1, 0],
     {
       extrapolateLeft: "clamp",
@@ -304,10 +343,10 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
         <div
           style={{
             position: "absolute",
-            top: 180,
-            left: 80,
-            right: 80,
-            bottom: 80,
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -320,41 +359,98 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
         </div>
       )}
 
-      {/* Scene 3: Full view with Contact Card and Draft Email */}
-      {frame >= SCENE_2_END - 20 && (
+      {/* Scene 3: LinkedIn Profile View */}
+      {frame >= SCENE_2_END - 20 && frame < SCENE_3_END + 30 && (
         <div
           style={{
             position: "absolute",
-            top: 140,
-            left: 60,
-            right: 60,
-            bottom: 60,
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 30,
+            justifyContent: "center",
+            alignItems: "center",
             opacity: scene3Opacity,
+          }}
+        >
+          <LinkedInProfile delay={SCENE_2_END} />
+        </div>
+      )}
+
+      {/* Scene 4: LinkedIn Request */}
+      {frame >= SCENE_3_END - 20 && frame < SCENE_4_END + 30 && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            opacity: scene4Opacity,
+          }}
+        >
+          <LinkedInRequest delay={SCENE_3_END} />
+        </div>
+      )}
+
+      {/* Scene 5: Outreach Email */}
+      {frame >= SCENE_4_END - 20 && frame < SCENE_5_END + 30 && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            opacity: scene5Opacity,
+          }}
+        >
+          <OutreachEmail delay={SCENE_4_END} />
+        </div>
+      )}
+
+      {/* Scene 6: Full view with Contact Card and Draft Email */}
+      {frame >= SCENE_5_END - 20 && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 30,
+            opacity: scene6Opacity,
+            padding: 60,
           }}
         >
           {/* Left column: Deal Created + Contact Card + Draft Email */}
           <div
             style={{
-              flex: 1,
               display: "flex",
               flexDirection: "column",
               gap: 20,
             }}
           >
             <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-              <DealCreated delay={SCENE_2_END} />
-              <ContactCard delay={SCENE_2_END + 15} />
+              <DealCreated delay={SCENE_5_END} />
+              <ContactCard delay={SCENE_5_END + 15} />
             </div>
-            <DraftEmail delay={SCENE_2_END + 30} />
+            <DraftEmail delay={SCENE_5_END + 30} />
           </div>
 
           {/* Right column: CRM Record */}
           <div>
-            <CRMRecord delay={SCENE_2_END + 5} />
+            <CRMRecord delay={SCENE_5_END + 5} />
           </div>
         </div>
       )}
