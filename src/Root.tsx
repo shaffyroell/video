@@ -2,7 +2,6 @@ import { Composition } from "remotion";
 import { HelloWorld, myCompSchema } from "./HelloWorld";
 import { Logo, myCompSchema2 } from "./HelloWorld/Logo";
 import { TechTower, techTowerSchema } from "./TechTower";
-import { LinkedInOutreach, linkedInOutreachSchema } from "./LinkedInOutreach";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -55,20 +54,6 @@ export const RemotionRoot: React.FC = () => {
         schema={techTowerSchema}
         defaultProps={{
           backgroundColor: "#f8fafc",
-        }}
-      />
-
-      {/* LinkedInOutreach - Multi-step outreach sequence animation */}
-      <Composition
-        id="LinkedInOutreach"
-        component={LinkedInOutreach}
-        durationInFrames={450}
-        fps={30}
-        width={1920}
-        height={1080}
-        schema={linkedInOutreachSchema}
-        defaultProps={{
-          backgroundColor: "#f0f9ff",
         }}
       />
     </>

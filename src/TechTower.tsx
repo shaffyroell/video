@@ -10,8 +10,9 @@ import { EmailCard } from "./TechTower/EmailCard";
 import { StageText } from "./TechTower/StageText";
 import { DealCreated } from "./TechTower/DealCreated";
 import { CRMRecord } from "./TechTower/CRMRecord";
-import { ContactCard } from "./TechTower/ContactCard";
-import { DraftEmail } from "./TechTower/DraftEmail";
+import { VisitCard } from "./TechTower/VisitCard";
+import { InviteCard } from "./TechTower/InviteCard";
+import { EmailOutreachCard } from "./TechTower/EmailOutreachCard";
 
 export const techTowerSchema = z.object({
   backgroundColor: z.string().default("#f8fafc"),
@@ -205,41 +206,194 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
         </div>
       )}
 
-      {/* Scene 3: Full view with Contact Card and Draft Email */}
+      {/* Scene 3: LinkedIn Outreach Sequence (Visit → Invite → Email) */}
       {frame >= SCENE_2_END - 20 && (
         <div
           style={{
             position: "absolute",
-            top: 140,
-            left: 60,
-            right: 60,
+            top: 120,
+            left: 0,
+            right: 0,
             bottom: 60,
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 30,
+            flexDirection: "column",
+            alignItems: "center",
             opacity: scene3Opacity,
           }}
         >
-          {/* Left column: Deal Created + Contact Card + Draft Email */}
+          {/* Section header */}
           <div
             style={{
-              flex: 1,
               display: "flex",
-              flexDirection: "column",
-              gap: 20,
+              alignItems: "center",
+              gap: 12,
+              marginBottom: 30,
+              opacity: interpolate(frame - SCENE_2_END, [0, 20], [0, 1], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+              }),
             }}
           >
-            <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-              <DealCreated delay={SCENE_2_END} />
-              <ContactCard delay={SCENE_2_END + 15} />
+            <div
+              style={{
+                backgroundColor: "#0077b5",
+                padding: "6px 12px",
+                borderRadius: 6,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span style={{ color: "white", fontWeight: 700, fontSize: 14 }}>
+                in
+              </span>
             </div>
-            <DraftEmail delay={SCENE_2_END + 30} />
+            <span
+              style={{
+                fontSize: 24,
+                fontWeight: 600,
+                color: "#1e293b",
+              }}
+            >
+              LinkedIn Outreach Sequence
+            </span>
           </div>
 
-          {/* Right column: CRM Record */}
-          <div>
-            <CRMRecord delay={SCENE_2_END + 5} />
+          {/* Cards container */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              gap: 24,
+            }}
+          >
+            {/* Card 1: Profile Visit */}
+            <VisitCard delay={SCENE_2_END + 10} />
+
+            {/* Connecting arrow 1 */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                paddingTop: 160,
+              }}
+            >
+              <div style={{ position: "relative", width: 60, height: 4 }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "#e2e8f0",
+                    borderRadius: 2,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: `${interpolate(frame - SCENE_2_END, [60, 90], [0, 100], {
+                      extrapolateLeft: "clamp",
+                      extrapolateRight: "clamp",
+                    })}%`,
+                    height: "100%",
+                    background: "linear-gradient(90deg, #0077b5, #00a0dc)",
+                    borderRadius: 2,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    right: -8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    opacity: interpolate(frame - SCENE_2_END, [85, 90], [0, 1], {
+                      extrapolateLeft: "clamp",
+                      extrapolateRight: "clamp",
+                    }),
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M5 12h14M12 5l7 7-7 7"
+                      stroke="#0077b5"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: Send Invite */}
+            <InviteCard delay={SCENE_2_END + 70} />
+
+            {/* Connecting arrow 2 */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                paddingTop: 160,
+              }}
+            >
+              <div style={{ position: "relative", width: 60, height: 4 }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "#e2e8f0",
+                    borderRadius: 2,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: `${interpolate(frame - SCENE_2_END, [140, 170], [0, 100], {
+                      extrapolateLeft: "clamp",
+                      extrapolateRight: "clamp",
+                    })}%`,
+                    height: "100%",
+                    background: "linear-gradient(90deg, #00a0dc, #3b82f6)",
+                    borderRadius: 2,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    right: -8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    opacity: interpolate(frame - SCENE_2_END, [165, 170], [0, 1], {
+                      extrapolateLeft: "clamp",
+                      extrapolateRight: "clamp",
+                    }),
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M5 12h14M12 5l7 7-7 7"
+                      stroke="#3b82f6"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Email Outreach */}
+            <EmailOutreachCard delay={SCENE_2_END + 150} />
           </div>
         </div>
       )}
