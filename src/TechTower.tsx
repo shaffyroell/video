@@ -27,12 +27,12 @@ const stages = [
 // Scene timing (in frames at 30fps)
 // Cards: 1.5 sec (45 frames) apart - delays 10, 55, 100, 145
 // Last card finishes animating around frame 175
-const TEXT_1_START = 185; // First text appears after cards
-const TEXT_1_END = 245; // First text stays 2 sec (60 frames)
-const TEXT_2_END = 335; // Second text stays 3 sec (90 frames - 1 sec longer)
-const SYSTEM_APPEAR = 345; // System appears after texts
-const CARDS_SLIDE_OUT = 355; // Cards start sliding into system
-const SCENE_1_END = 480; // End of scene 1 (stages cycle)
+const TEXT_1_START = 175; // First text appears after cards
+const TEXT_1_END = 220; // First text stays ~1.5 sec
+const TEXT_2_END = 280; // Second text stays ~2 sec
+const SYSTEM_APPEAR = 290; // System appears after texts
+const CARDS_SLIDE_OUT = 300; // Cards start sliding into system
+const SCENE_1_END = 400; // End of scene 1 (stages cycle)
 
 export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   backgroundColor = "#f8fafc",

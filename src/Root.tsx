@@ -47,7 +47,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="TechTower"
         component={TechTower}
-        durationInFrames={1000}
+        durationInFrames={590}
         fps={30}
         width={1920}
         height={1080}
