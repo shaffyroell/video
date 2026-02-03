@@ -16,8 +16,8 @@ const checklistItems = [
 ];
 
 const integrations = [
-  { name: "Arfinity", color: "#3b82f6" },
-  { name: "attio", color: "#ef4444" },
+  { name: "Affinity", color: "#3b82f6" },
+  { name: "Attio", color: "#ef4444" },
   { name: "Airtable", color: "#f59e0b" },
 ];
 
