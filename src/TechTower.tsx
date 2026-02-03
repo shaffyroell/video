@@ -276,7 +276,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
               style={{
                 display: "flex",
                 alignItems: "center",
-                paddingTop: 160,
+                paddingTop: 140,
               }}
             >
               <div style={{ position: "relative", width: 60, height: 4 }}>
@@ -338,7 +338,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
               style={{
                 display: "flex",
                 alignItems: "center",
-                paddingTop: 160,
+                paddingTop: 140,
               }}
             >
               <div style={{ position: "relative", width: 60, height: 4 }}>

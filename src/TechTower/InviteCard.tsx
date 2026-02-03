@@ -92,10 +92,10 @@ export const InviteCard: React.FC<InviteCardProps> = ({ delay }) => {
       <div
         style={{
           backgroundColor: "white",
-          borderRadius: 16,
-          padding: 28,
+          borderRadius: 14,
+          padding: 20,
           boxShadow: "0 8px 32px rgba(0, 119, 181, 0.15)",
-          width: 320,
+          width: 280,
           border: "2px solid #e8f4f8",
         }}
       >
@@ -134,16 +134,16 @@ export const InviteCard: React.FC<InviteCardProps> = ({ delay }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 12,
-            marginBottom: 20,
-            padding: "16px 0",
+            gap: 10,
+            marginBottom: 16,
+            padding: "12px 0",
           }}
         >
           {/* Your avatar */}
           <div
             style={{
-              width: 48,
-              height: 48,
+              width: 40,
+              height: 40,
               borderRadius: "50%",
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
               display: "flex",
@@ -151,7 +151,7 @@ export const InviteCard: React.FC<InviteCardProps> = ({ delay }) => {
               justifyContent: "center",
               color: "white",
               fontWeight: 600,
-              fontSize: 16,
+              fontSize: 13,
               border: "2px solid white",
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
             }}
@@ -160,7 +160,7 @@ export const InviteCard: React.FC<InviteCardProps> = ({ delay }) => {
           </div>
 
           {/* Connection line */}
-          <div style={{ position: "relative", width: 80, height: 4 }}>
+          <div style={{ position: "relative", width: 60, height: 4 }}>
             <div
               style={{
                 position: "absolute",
@@ -226,8 +226,8 @@ export const InviteCard: React.FC<InviteCardProps> = ({ delay }) => {
           {/* Their avatar */}
           <div
             style={{
-              width: 48,
-              height: 48,
+              width: 40,
+              height: 40,
               borderRadius: "50%",
               background: "linear-gradient(135deg, #0077b5 0%, #00a0dc 100%)",
               display: "flex",
@@ -235,7 +235,7 @@ export const InviteCard: React.FC<InviteCardProps> = ({ delay }) => {
               justifyContent: "center",
               color: "white",
               fontWeight: 600,
-              fontSize: 16,
+              fontSize: 13,
               border: "2px solid white",
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
             }}
@@ -248,17 +248,17 @@ export const InviteCard: React.FC<InviteCardProps> = ({ delay }) => {
         <div
           style={{
             backgroundColor: "#f8fafc",
-            borderRadius: 10,
-            padding: 14,
-            marginBottom: 16,
+            borderRadius: 8,
+            padding: 12,
+            marginBottom: 14,
             borderLeft: "3px solid #0077b5",
           }}
         >
-          <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 6 }}>
+          <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 4 }}>
             Connection note:
           </div>
-          <div style={{ fontSize: 14, color: "#475569", lineHeight: 1.5 }}>
-            "Hi Sarah, I came across your profile and would love to connect..."
+          <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.4 }}>
+            "Hi Sarah, would love to connect..."
           </div>
         </div>
 

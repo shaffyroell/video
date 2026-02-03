@@ -5,14 +5,12 @@ interface EmailOutreachCardProps {
   delay: number;
 }
 
-const emailSubject = "Quick intro - saw your recent post";
+const emailSubject = "Quick intro - saw your post";
 const emailBody = `Hi Sarah,
 
-I noticed your insights on engineering leadership - really resonated with our team's approach.
+Loved your insights on engineering leadership.
 
-Would love to connect and share how we're solving similar challenges at scale.
-
-Free for a 15-min call this week?`;
+Would love to connect - free for a quick call this week?`;
 
 export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
   delay,
@@ -35,7 +33,7 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
   });
 
   // Typing animation for email body
-  const typingProgress = interpolate(frame - delay - 30, [0, 100], [0, 1], {
+  const typingProgress = interpolate(frame - delay - 25, [0, 60], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -44,24 +42,24 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
   const visibleText = emailBody.slice(0, visibleChars);
 
   // Send animation
-  const sendProgress = interpolate(frame - delay, [140, 160], [0, 1], {
+  const sendProgress = interpolate(frame - delay, [95, 110], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
   // Paper plane fly animation
-  const planeFly = interpolate(frame - delay, [160, 180], [0, 100], {
+  const planeFly = interpolate(frame - delay, [110, 125], [0, 100], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  const planeOpacity = interpolate(frame - delay, [160, 175, 180], [1, 1, 0], {
+  const planeOpacity = interpolate(frame - delay, [110, 120, 125], [1, 1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
   // Final checkmark
-  const checkOpacity = interpolate(frame - delay, [175, 185], [0, 1], {
+  const checkOpacity = interpolate(frame - delay, [120, 130], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -100,10 +98,10 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
       <div
         style={{
           backgroundColor: "white",
-          borderRadius: 16,
-          padding: 28,
+          borderRadius: 14,
+          padding: 20,
           boxShadow: "0 8px 32px rgba(0, 119, 181, 0.15)",
-          width: 360,
+          width: 300,
           border: "2px solid #e8f4f8",
           position: "relative",
           overflow: "hidden",
@@ -138,24 +136,24 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 12,
-            marginBottom: 16,
-            paddingBottom: 16,
+            gap: 10,
+            marginBottom: 12,
+            paddingBottom: 12,
             borderBottom: "1px solid #f1f5f9",
           }}
         >
           <div
             style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
+              width: 36,
+              height: 36,
+              borderRadius: 8,
               background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <rect
                 x="2"
                 y="4"
@@ -169,10 +167,10 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
             </svg>
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: "#1e293b" }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
               New Email
             </div>
-            <div style={{ fontSize: 12, color: "#64748b" }}>
+            <div style={{ fontSize: 11, color: "#64748b" }}>
               To: sarah.m@techcorp.com
             </div>
           </div>
@@ -195,14 +193,14 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
         {/* Subject line */}
         <div
           style={{
-            marginBottom: 12,
-            padding: "10px 14px",
+            marginBottom: 10,
+            padding: "8px 12px",
             backgroundColor: "#f8fafc",
-            borderRadius: 8,
+            borderRadius: 6,
           }}
         >
-          <span style={{ fontSize: 12, color: "#94a3b8" }}>Subject: </span>
-          <span style={{ fontSize: 14, color: "#1e293b", fontWeight: 500 }}>
+          <span style={{ fontSize: 11, color: "#94a3b8" }}>Subject: </span>
+          <span style={{ fontSize: 13, color: "#1e293b", fontWeight: 500 }}>
             {emailSubject}
           </span>
         </div>
@@ -210,12 +208,12 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
         {/* Email body with typing effect */}
         <div
           style={{
-            fontSize: 14,
+            fontSize: 13,
             color: "#475569",
-            lineHeight: 1.7,
+            lineHeight: 1.6,
             whiteSpace: "pre-wrap",
-            minHeight: 160,
-            padding: "8px 0",
+            minHeight: 80,
+            padding: "6px 0",
           }}
         >
           {visibleText}
@@ -239,8 +237,8 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
-            marginTop: 16,
-            paddingTop: 16,
+            marginTop: 12,
+            paddingTop: 12,
             borderTop: "1px solid #f1f5f9",
           }}
         >
@@ -249,14 +247,14 @@ export const EmailOutreachCard: React.FC<EmailOutreachCardProps> = ({
               backgroundColor: sendProgress >= 1 ? "#10b981" : "#3b82f6",
               color: "white",
               border: "none",
-              padding: "10px 20px",
-              borderRadius: 20,
-              fontSize: 14,
+              padding: "8px 16px",
+              borderRadius: 16,
+              fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              gap: 8,
+              gap: 6,
             }}
           >
             {sendProgress >= 1 ? (

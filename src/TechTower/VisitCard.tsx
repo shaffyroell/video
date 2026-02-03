@@ -74,10 +74,10 @@ export const VisitCard: React.FC<VisitCardProps> = ({ delay }) => {
       <div
         style={{
           backgroundColor: "white",
-          borderRadius: 16,
-          padding: 28,
+          borderRadius: 14,
+          padding: 20,
           boxShadow: "0 8px 32px rgba(0, 119, 181, 0.15)",
-          width: 320,
+          width: 280,
           border: "2px solid #e8f4f8",
         }}
       >
@@ -133,11 +133,11 @@ export const VisitCard: React.FC<VisitCardProps> = ({ delay }) => {
         </div>
 
         {/* Profile preview */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div
             style={{
-              width: 64,
-              height: 64,
+              width: 52,
+              height: 52,
               borderRadius: "50%",
               background: "linear-gradient(135deg, #0077b5 0%, #00a0dc 100%)",
               display: "flex",
@@ -145,8 +145,8 @@ export const VisitCard: React.FC<VisitCardProps> = ({ delay }) => {
               justifyContent: "center",
               color: "white",
               fontWeight: 600,
-              fontSize: 22,
-              border: "3px solid white",
+              fontSize: 18,
+              border: "2px solid white",
               boxShadow: "0 4px 12px rgba(0, 119, 181, 0.3)",
             }}
           >
@@ -155,28 +155,28 @@ export const VisitCard: React.FC<VisitCardProps> = ({ delay }) => {
           <div style={{ flex: 1 }}>
             <div
               style={{
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: 600,
                 color: "#1e293b",
-                marginBottom: 4,
+                marginBottom: 2,
               }}
             >
               Sarah Martinez
             </div>
-            <div style={{ fontSize: 14, color: "#64748b", marginBottom: 2 }}>
+            <div style={{ fontSize: 13, color: "#64748b", marginBottom: 2 }}>
               VP of Engineering
             </div>
-            <div style={{ fontSize: 13, color: "#94a3b8" }}>TechCorp Inc.</div>
+            <div style={{ fontSize: 12, color: "#94a3b8" }}>TechCorp Inc.</div>
           </div>
         </div>
 
         {/* Action indicator */}
         <div
           style={{
-            marginTop: 20,
-            padding: "12px 16px",
+            marginTop: 16,
+            padding: "10px 14px",
             backgroundColor: "#f0f9ff",
-            borderRadius: 10,
+            borderRadius: 8,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
