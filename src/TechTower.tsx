@@ -38,9 +38,7 @@ const SYSTEM_APPEAR = 345; // System appears after texts
 const CARDS_SLIDE_OUT = 355; // Cards start sliding into system
 const SCENE_1_END = 480; // End of scene 1 (stages cycle)
 const SCENE_2_END = 570; // Deal created + CRM record
-const SCENE_3_END = 660; // LinkedIn profile view
-const SCENE_4_END = 750; // LinkedIn request
-const SCENE_5_END = 840; // Outreach email
+const SCENE_3_END = 750; // Combined: LinkedIn profile + request + email
 
 export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
   backgroundColor = "#f8fafc",
@@ -76,7 +74,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
     }
   );
 
-  // Scene 3 fade in/out (LinkedIn Profile)
+  // Scene 3 fade in/out (Combined: LinkedIn Profile + Request + Email)
   const scene3Opacity = interpolate(
     frame,
     [SCENE_2_END, SCENE_2_END + 20, SCENE_3_END - 30, SCENE_3_END],
@@ -87,32 +85,10 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
     }
   );
 
-  // Scene 4 fade in/out (LinkedIn Request)
+  // Scene 4 fade in and final fade out (Full view)
   const scene4Opacity = interpolate(
     frame,
-    [SCENE_3_END, SCENE_3_END + 20, SCENE_4_END - 30, SCENE_4_END],
-    [0, 1, 1, 0],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }
-  );
-
-  // Scene 5 fade in/out (Outreach Email)
-  const scene5Opacity = interpolate(
-    frame,
-    [SCENE_4_END, SCENE_4_END + 20, SCENE_5_END - 30, SCENE_5_END],
-    [0, 1, 1, 0],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }
-  );
-
-  // Scene 6 fade in and final fade out (Full view)
-  const scene6Opacity = interpolate(
-    frame,
-    [SCENE_5_END, SCENE_5_END + 20, durationInFrames - 30, durationInFrames],
+    [SCENE_3_END, SCENE_3_END + 20, durationInFrames - 30, durationInFrames],
     [0, 1, 1, 0],
     {
       extrapolateLeft: "clamp",
@@ -359,7 +335,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
         </div>
       )}
 
-      {/* Scene 3: LinkedIn Profile View */}
+      {/* Scene 3: Combined LinkedIn Profile + Request + Email */}
       {frame >= SCENE_2_END - 20 && frame < SCENE_3_END + 30 && (
         <div
           style={{
@@ -371,53 +347,18 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            gap: 40,
             opacity: scene3Opacity,
           }}
         >
           <LinkedInProfile delay={SCENE_2_END} />
+          <LinkedInRequest delay={SCENE_2_END + 30} />
+          <OutreachEmail delay={SCENE_2_END + 60} />
         </div>
       )}
 
-      {/* Scene 4: LinkedIn Request */}
-      {frame >= SCENE_3_END - 20 && frame < SCENE_4_END + 30 && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: scene4Opacity,
-          }}
-        >
-          <LinkedInRequest delay={SCENE_3_END} />
-        </div>
-      )}
-
-      {/* Scene 5: Outreach Email */}
-      {frame >= SCENE_4_END - 20 && frame < SCENE_5_END + 30 && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: scene5Opacity,
-          }}
-        >
-          <OutreachEmail delay={SCENE_4_END} />
-        </div>
-      )}
-
-      {/* Scene 6: Full view with Contact Card and Draft Email */}
-      {frame >= SCENE_5_END - 20 && (
+      {/* Scene 4: Full view with Contact Card and Draft Email */}
+      {frame >= SCENE_3_END - 20 && (
         <div
           style={{
             position: "absolute",
@@ -429,7 +370,7 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
             justifyContent: "center",
             alignItems: "center",
             gap: 30,
-            opacity: scene6Opacity,
+            opacity: scene4Opacity,
             padding: 60,
           }}
         >
@@ -442,15 +383,15 @@ export const TechTower: React.FC<z.infer<typeof techTowerSchema>> = ({
             }}
           >
             <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-              <DealCreated delay={SCENE_5_END} />
-              <ContactCard delay={SCENE_5_END + 15} />
+              <DealCreated delay={SCENE_3_END} />
+              <ContactCard delay={SCENE_3_END + 15} />
             </div>
-            <DraftEmail delay={SCENE_5_END + 30} />
+            <DraftEmail delay={SCENE_3_END + 30} />
           </div>
 
           {/* Right column: CRM Record */}
           <div>
-            <CRMRecord delay={SCENE_5_END + 5} />
+            <CRMRecord delay={SCENE_3_END + 5} />
           </div>
         </div>
       )}
