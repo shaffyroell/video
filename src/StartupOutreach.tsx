@@ -174,13 +174,14 @@ export const StartupOutreach: React.FC<
         <div
           style={{
             position: "absolute",
-            top: 130,
+            top: 100,
             left: 60,
             right: 60,
-            bottom: 60,
+            bottom: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
             opacity: scene1Opacity,
           }}
         >
@@ -206,13 +207,14 @@ export const StartupOutreach: React.FC<
         <div
           style={{
             position: "absolute",
-            top: 130,
+            top: 100,
             left: 60,
             right: 60,
-            bottom: 60,
+            bottom: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
             opacity: scene2Opacity,
           }}
         >
@@ -240,13 +242,14 @@ export const StartupOutreach: React.FC<
         <div
           style={{
             position: "absolute",
-            top: 130,
+            top: 100,
             left: 60,
             right: 60,
-            bottom: 60,
+            bottom: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
             opacity: scene3Opacity,
           }}
         >
@@ -274,13 +277,14 @@ export const StartupOutreach: React.FC<
         <div
           style={{
             position: "absolute",
-            top: 120,
+            top: 100,
             left: 40,
             right: 40,
-            bottom: 60,
+            bottom: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
             opacity: scene4Opacity,
           }}
         >
