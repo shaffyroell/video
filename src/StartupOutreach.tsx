@@ -16,10 +16,10 @@ export const startupOutreachSchema = z.object({
 });
 
 // Scene timing (in frames at 30fps)
-const SCENE_1_END = 270; // Data scraping + signal monitoring
-const SCENE_2_END = 480; // Ranking
-const SCENE_3_END = 660; // Find individuals
-// Scene 4 runs from 660 to end (900)
+const SCENE_1_END = 210; // Data scraping + signal monitoring
+const SCENE_2_END = 370; // Ranking
+const SCENE_3_END = 510; // Find individuals
+// Scene 4 runs from 510 to end (720)
 
 export const StartupOutreach: React.FC<
   z.infer<typeof startupOutreachSchema>

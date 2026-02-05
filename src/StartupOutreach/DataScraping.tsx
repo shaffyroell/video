@@ -93,7 +93,7 @@ export const DataScraping: React.FC<DataScrapingProps> = ({ delay }) => {
   const frame = useCurrentFrame();
 
   // Signal monitoring section
-  const signalDelay = delay + 90;
+  const signalDelay = delay + 70;
   const signalOpacity = interpolate(frame - signalDelay, [0, 25], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
