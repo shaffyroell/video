@@ -2,6 +2,7 @@ import { Composition } from "remotion";
 import { HelloWorld, myCompSchema } from "./HelloWorld";
 import { Logo, myCompSchema2 } from "./HelloWorld/Logo";
 import { TechTower, techTowerSchema } from "./TechTower";
+import { StartupOutreach, startupOutreachSchema } from "./StartupOutreach";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -52,6 +53,20 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         schema={techTowerSchema}
+        defaultProps={{
+          backgroundColor: "#f8fafc",
+        }}
+      />
+
+      {/* StartupOutreach - Full outreach pipeline demo */}
+      <Composition
+        id="StartupOutreach"
+        component={StartupOutreach}
+        durationInFrames={900}
+        fps={30}
+        width={1920}
+        height={1080}
+        schema={startupOutreachSchema}
         defaultProps={{
           backgroundColor: "#f8fafc",
         }}
