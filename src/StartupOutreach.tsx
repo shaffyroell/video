@@ -107,7 +107,17 @@ export const StartupOutreach: React.FC<
         </div>
 
         {/* Step indicators */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            backgroundColor: "white",
+            padding: "10px 20px",
+            borderRadius: 28,
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.06)",
+          }}
+        >
           {steps.map((step, i) => {
             const isActive = i === currentStep;
             const isPast = i < currentStep;
@@ -116,9 +126,10 @@ export const StartupOutreach: React.FC<
                 {i > 0 && (
                   <div
                     style={{
-                      width: 20,
-                      height: 2,
+                      width: 24,
+                      height: 3,
                       backgroundColor: isPast ? "#10b981" : "#e2e8f0",
+                      borderRadius: 2,
                     }}
                   />
                 )}
@@ -126,9 +137,9 @@ export const StartupOutreach: React.FC<
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 6,
-                    padding: "6px 14px",
-                    borderRadius: 20,
+                    gap: 8,
+                    padding: "8px 18px",
+                    borderRadius: 22,
                     backgroundColor: isActive
                       ? "#3b82f6"
                       : isPast
@@ -139,15 +150,14 @@ export const StartupOutreach: React.FC<
                       : isPast
                         ? "#10b981"
                         : "#94a3b8",
-                    fontSize: 12,
+                    fontSize: 15,
                     fontWeight: 600,
-                    transition: "all 0.3s",
                   }}
                 >
                   {isPast ? (
                     <svg
-                      width="14"
-                      height="14"
+                      width="18"
+                      height="18"
                       viewBox="0 0 24 24"
                       fill="none"
                     >
