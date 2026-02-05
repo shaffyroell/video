@@ -7,14 +7,16 @@ interface DataScrapingProps {
 
 const dataSources = [
   {
-    type: "Leads",
+    type: "B2B Leads",
+    subtitle: "ICP-matched companies",
     icon: "target",
     color: "#3b82f6",
-    count: "2,847",
-    items: ["Crunchbase", "LinkedIn", "AngelList"],
+    count: "20,000",
+    items: ["LinkedIn", "Google Maps", "Crunchbase", "AngelList"],
   },
   {
     type: "Candidates",
+    subtitle: "Talent pipeline",
     icon: "users",
     color: "#8b5cf6",
     count: "1,203",
@@ -22,11 +24,18 @@ const dataSources = [
   },
   {
     type: "Investors",
+    subtitle: "Fund & angel matching",
     icon: "briefcase",
     color: "#10b981",
     count: "412",
     items: ["PitchBook", "Dealroom", "Twitter/X"],
   },
+];
+
+const signals = [
+  { platform: "X / Twitter", color: "#1d9bf0", conversations: "3,241" },
+  { platform: "LinkedIn", color: "#0077b5", conversations: "1,872" },
+  { platform: "Reddit", color: "#ff4500", conversations: "948" },
 ];
 
 const TargetIcon = () => (
@@ -83,175 +92,304 @@ const icons: Record<string, React.FC> = {
 export const DataScraping: React.FC<DataScrapingProps> = ({ delay }) => {
   const frame = useCurrentFrame();
 
+  // Signal monitoring section
+  const signalDelay = delay + 90;
+  const signalOpacity = interpolate(frame - signalDelay, [0, 25], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const signalSlideUp = interpolate(frame - signalDelay, [0, 25], [30, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
   return (
     <div
       style={{
         display: "flex",
-        gap: 28,
-        justifyContent: "center",
-        alignItems: "flex-start",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 24,
       }}
     >
-      {dataSources.map((source, index) => {
-        const cardDelay = delay + index * 25;
-        const opacity = interpolate(frame - cardDelay, [0, 25], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        });
-        const slideUp = interpolate(frame - cardDelay, [0, 25], [50, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        });
-        const scale = interpolate(frame - cardDelay, [0, 25], [0.85, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        });
+      {/* Data source cards */}
+      <div
+        style={{
+          display: "flex",
+          gap: 28,
+          justifyContent: "center",
+          alignItems: "flex-start",
+        }}
+      >
+        {dataSources.map((source, index) => {
+          const cardDelay = delay + index * 25;
+          const opacity = interpolate(frame - cardDelay, [0, 25], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          });
+          const slideUp = interpolate(frame - cardDelay, [0, 25], [50, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          });
+          const scale = interpolate(frame - cardDelay, [0, 25], [0.85, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          });
 
-        // Counting animation for the number
-        const countProgress = interpolate(
-          frame - cardDelay - 25,
-          [0, 40],
-          [0, 1],
-          { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-        );
-        const numericCount = parseInt(source.count.replace(",", ""));
-        const displayCount = Math.floor(countProgress * numericCount);
-        const formattedCount = displayCount.toLocaleString();
+          // Counting animation for the number
+          const countProgress = interpolate(
+            frame - cardDelay - 25,
+            [0, 40],
+            [0, 1],
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+          );
+          const numericCount = parseInt(source.count.replace(/,/g, ""));
+          const displayCount = Math.floor(countProgress * numericCount);
+          const formattedCount = displayCount.toLocaleString();
 
-        // Source items stagger
-        const Icon = icons[source.icon];
+          const Icon = icons[source.icon];
 
-        return (
-          <div
-            key={source.type}
-            style={{
-              opacity,
-              transform: `translateY(${slideUp}px) scale(${scale})`,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 12,
-            }}
-          >
-            {/* Card */}
+          return (
             <div
+              key={source.type}
               style={{
-                backgroundColor: "white",
-                borderRadius: 16,
-                padding: 24,
-                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
-                width: 280,
-                border: `2px solid ${source.color}20`,
+                opacity,
+                transform: `translateY(${slideUp}px) scale(${scale})`,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 12,
               }}
             >
-              {/* Header */}
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  marginBottom: 16,
+                  backgroundColor: "white",
+                  borderRadius: 16,
+                  padding: 24,
+                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+                  width: 280,
+                  border: `2px solid ${source.color}20`,
                 }}
               >
+                {/* Header */}
                 <div
                   style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
-                    backgroundColor: `${source.color}15`,
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    color: source.color,
+                    gap: 12,
+                    marginBottom: 16,
                   }}
                 >
-                  <Icon />
-                </div>
-                <div>
                   <div
                     style={{
-                      fontSize: 16,
-                      fontWeight: 600,
-                      color: "#1e293b",
+                      width: 44,
+                      height: 44,
+                      borderRadius: 12,
+                      backgroundColor: `${source.color}15`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: source.color,
                     }}
                   >
-                    {source.type}
+                    <Icon />
                   </div>
-                  <div style={{ fontSize: 12, color: "#94a3b8" }}>
-                    Scraping...
-                  </div>
-                </div>
-              </div>
-
-              {/* Count */}
-              <div
-                style={{
-                  fontSize: 36,
-                  fontWeight: 700,
-                  color: source.color,
-                  marginBottom: 16,
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {formattedCount}
-              </div>
-
-              {/* Sources */}
-              <div
-                style={{
-                  borderTop: "1px solid #f1f5f9",
-                  paddingTop: 14,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "#94a3b8",
-                    marginBottom: 8,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.5,
-                  }}
-                >
-                  Sources
-                </div>
-                {source.items.map((item, itemIndex) => {
-                  const itemDelay = cardDelay + 30 + itemIndex * 10;
-                  const itemOpacity = interpolate(
-                    frame - itemDelay,
-                    [0, 15],
-                    [0, 1],
-                    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-                  );
-                  return (
+                  <div>
                     <div
-                      key={item}
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        marginBottom: 6,
-                        opacity: itemOpacity,
+                        fontSize: 16,
+                        fontWeight: 600,
+                        color: "#1e293b",
                       }}
                     >
-                      <div
-                        style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: 3,
-                          backgroundColor: source.color,
-                        }}
-                      />
-                      <span style={{ fontSize: 13, color: "#64748b" }}>
-                        {item}
-                      </span>
+                      {source.type}
                     </div>
-                  );
-                })}
+                    <div style={{ fontSize: 12, color: "#94a3b8" }}>
+                      {source.subtitle}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Count */}
+                <div
+                  style={{
+                    fontSize: 36,
+                    fontWeight: 700,
+                    color: source.color,
+                    marginBottom: 16,
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {formattedCount}
+                </div>
+
+                {/* Sources */}
+                <div
+                  style={{
+                    borderTop: "1px solid #f1f5f9",
+                    paddingTop: 14,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: "#94a3b8",
+                      marginBottom: 8,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    Sources
+                  </div>
+                  {source.items.map((item, itemIndex) => {
+                    const itemDelay = cardDelay + 30 + itemIndex * 10;
+                    const itemOpacity = interpolate(
+                      frame - itemDelay,
+                      [0, 15],
+                      [0, 1],
+                      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+                    );
+                    return (
+                      <div
+                        key={item}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          marginBottom: 6,
+                          opacity: itemOpacity,
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: source.color,
+                          }}
+                        />
+                        <span style={{ fontSize: 13, color: "#64748b" }}>
+                          {item}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
+          );
+        })}
+      </div>
+
+      {/* Signal Monitoring Bar */}
+      <div
+        style={{
+          opacity: signalOpacity,
+          transform: `translateY(${signalSlideUp}px)`,
+          backgroundColor: "white",
+          borderRadius: 16,
+          padding: "18px 28px",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+          border: "2px solid #fbbf2420",
+          display: "flex",
+          alignItems: "center",
+          gap: 24,
+        }}
+      >
+        {/* Signal icon + label */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              backgroundColor: "#fef3c7",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M18.36 5.64a9 9 0 11-12.73 0M12 2v10"
+                stroke="#f59e0b"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
-        );
-      })}
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#1e293b" }}>
+              Monitoring Signals
+            </div>
+            <div style={{ fontSize: 11, color: "#94a3b8" }}>
+              Tracking buying-intent conversations
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div
+          style={{
+            width: 1,
+            height: 40,
+            backgroundColor: "#f1f5f9",
+          }}
+        />
+
+        {/* Platform signals */}
+        {signals.map((signal, i) => {
+          const sigDelay = signalDelay + 15 + i * 12;
+          const sigOpacity = interpolate(frame - sigDelay, [0, 15], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          });
+
+          // Count up
+          const countProgress = interpolate(
+            frame - sigDelay - 5,
+            [0, 25],
+            [0, 1],
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+          );
+          const numericCount = parseInt(signal.conversations.replace(/,/g, ""));
+          const displayCount = Math.floor(
+            countProgress * numericCount
+          ).toLocaleString();
+
+          return (
+            <div
+              key={signal.platform}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                opacity: sigOpacity,
+                padding: "8px 16px",
+                backgroundColor: "#fafafa",
+                borderRadius: 10,
+              }}
+            >
+              <div
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: signal.color,
+                }}
+              />
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
+                  {signal.platform}
+                </div>
+                <div style={{ fontSize: 11, color: "#64748b" }}>
+                  {displayCount} conversations
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

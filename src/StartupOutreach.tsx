@@ -16,10 +16,10 @@ export const startupOutreachSchema = z.object({
 });
 
 // Scene timing (in frames at 30fps)
-const SCENE_1_END = 210; // Data scraping
-const SCENE_2_END = 420; // Ranking
-const SCENE_3_END = 600; // Find individuals
-// Scene 4 runs from 600 to end (900)
+const SCENE_1_END = 270; // Data scraping + signal monitoring
+const SCENE_2_END = 480; // Ranking
+const SCENE_3_END = 660; // Find individuals
+// Scene 4 runs from 660 to end (900)
 
 export const StartupOutreach: React.FC<
   z.infer<typeof startupOutreachSchema>
@@ -195,7 +195,7 @@ export const StartupOutreach: React.FC<
               }),
             }}
           >
-            Scraping leads, candidates, and investors from multiple sources
+            Scraping B2B leads, candidates, and investors + monitoring signals
           </div>
           <DataScraping delay={15} />
         </div>
