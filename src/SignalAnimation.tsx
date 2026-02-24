@@ -1,11 +1,10 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 import { z } from 'zod';
 import { colors, font } from './tokens';
 import { signals } from './data/signals';
-import { LiveDot } from './components/LiveDot';
 import { SignalRow } from './components/SignalRow';
-import { Beat1Signals } from './beats/Beat1Signals';
+import { LiveDot } from './components/LiveDot';
 import { Beat2Research } from './beats/Beat2Research';
 import { Beat3Outreach } from './beats/Beat3Outreach';
 import { Beat4CRM } from './beats/Beat4CRM';
@@ -15,15 +14,18 @@ export const signalAnimationSchema = z.object({
   backgroundColor: z.string().default('#F5F5F5'),
 });
 
-// Beat frame boundaries
-const BEAT_1_END = 90;
-const BEAT_2_END = 210;
-const BEAT_3_END = 360;
-const BEAT_4_END = 420;
-// Beat 5: 420 - 540
+// Beat frame boundaries - extended for better pacing
+const BEAT_1_END = 180;   // Signals come in + pause to view
+const BEAT_2_END = 300;   // Desk Research
+const BEAT_3_END = 420;   // Outreach
+const BEAT_4_END = 480;   // Update CRM
+// Beat 5: 480 - 540      // Memo sent
+
+// Steps for indicator
+const STEPS = ['Signals', 'Desk Research', 'Outreach', 'Update CRM', 'Memo Sent'];
 
 // Typing animation config
-const WORDS = ['clients', 'investments', 'angels/LPs', 'candidates'];
+const WORDS = ['clients', 'angels/LPs', 'new investments', 'candidates'];
 const FRAMES_PER_CYCLE = 135;
 const TYPE_SPEED = 3;
 const DELETE_SPEED = 2;
@@ -52,10 +54,18 @@ function getTypedWord(frame: number): string {
   return '';
 }
 
+function getCurrentStep(frame: number): number {
+  if (frame < BEAT_1_END) return 0;
+  if (frame < BEAT_2_END) return 1;
+  if (frame < BEAT_3_END) return 2;
+  if (frame < BEAT_4_END) return 3;
+  return 4;
+}
+
 export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = ({ backgroundColor }) => {
   const frame = useCurrentFrame();
-
   const typedWord = getTypedWord(frame);
+  const currentStep = getCurrentStep(frame);
 
   const beat = frame < BEAT_1_END
     ? 1
@@ -68,7 +78,6 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
     : 5;
 
   const HEADER_HEIGHT = 62;
-  const LEFT_WIDTH = 380;
 
   return (
     <AbsoluteFill style={{ background: backgroundColor || colors.background, fontFamily: 'Inter, sans-serif' }}>
@@ -80,121 +89,215 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
           borderBottom: `1px solid ${colors.border}`,
           display: 'flex',
           alignItems: 'center',
-          paddingLeft: 24,
-          paddingRight: 24,
+          justifyContent: 'center',
+          position: 'relative',
           flexShrink: 0,
         }}
       >
-        <span style={{ fontSize: 20, fontWeight: font.weights.semibold, color: colors.textPrimary }}>
-          Systems to find new{' '}
-        </span>
-        <span
-          style={{
-            fontSize: 20,
-            fontWeight: font.weights.bold,
-            color: colors.blue,
-            minWidth: 160,
-            display: 'inline-block',
-          }}
-        >
-          {typedWord}
+        {/* Centered title text */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ fontSize: 20, fontWeight: font.weights.semibold, color: colors.textPrimary }}>
+            Systems to find{' '}
+          </span>
           <span
             style={{
+              fontSize: 20,
+              fontWeight: font.weights.bold,
+              color: colors.blue,
+              minWidth: 180,
               display: 'inline-block',
-              width: 2,
-              height: 22,
-              background: colors.blue,
-              marginLeft: 2,
-              verticalAlign: 'middle',
-              opacity: Math.round(frame / 15) % 2 === 0 ? 1 : 0,
             }}
-          />
-        </span>
+          >
+            {typedWord}
+            <span
+              style={{
+                display: 'inline-block',
+                width: 2,
+                height: 22,
+                background: colors.blue,
+                marginLeft: 2,
+                verticalAlign: 'middle',
+                opacity: Math.round(frame / 15) % 2 === 0 ? 1 : 0,
+              }}
+            />
+          </span>
+        </div>
+
+        {/* Step indicator - top right */}
+        <div
+          style={{
+            position: 'absolute',
+            right: 20,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          {STEPS.map((step, i) => {
+            const isActive = i === currentStep;
+            const isPast = i < currentStep;
+            return (
+              <div
+                key={step}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 10,
+                    fontWeight: isActive ? font.weights.semibold : font.weights.regular,
+                    color: isActive ? colors.blue : isPast ? colors.green : colors.textSecondary,
+                    padding: '3px 8px',
+                    borderRadius: 10,
+                    background: isActive ? '#EBF5FF' : isPast ? '#ECFDF5' : 'transparent',
+                    border: isActive ? `1px solid ${colors.blue}` : isPast ? `1px solid ${colors.green}` : `1px solid ${colors.border}`,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {isPast ? '✓ ' : ''}{step}
+                </div>
+                {i < STEPS.length - 1 && (
+                  <div style={{ width: 8, height: 1, background: colors.border }} />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Main content row */}
+      {/* Main content - full width, one thing at a time */}
       <div
         style={{
-          display: 'flex',
           flex: 1,
-          height: `calc(100% - ${HEADER_HEIGHT}px)`,
+          display: 'flex',
+          flexDirection: 'column',
           overflow: 'hidden',
         }}
       >
-        {/* Left Panel — persistent signal feed */}
-        <div
-          style={{
-            width: LEFT_WIDTH,
-            flexShrink: 0,
-            borderRight: `1px solid ${colors.border}`,
-            background: colors.background,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Left header */}
+        {/* Beat 1: Signals */}
+        {beat === 1 && (
           <div
             style={{
-              padding: '14px 16px 10px',
+              flex: 1,
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: 7,
-              borderBottom: `1px solid ${colors.border}`,
+              padding: '20px 40px',
             }}
           >
-            <span
+            {/* Signals header */}
+            <div
               style={{
-                fontSize: font.sizes.label,
-                fontWeight: font.weights.semibold,
-                color: colors.textSecondary,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                marginBottom: 16,
               }}
             >
-              Signals
-            </span>
-            <LiveDot frame={frame} />
-          </div>
+              <span
+                style={{
+                  fontSize: font.sizes.label,
+                  fontWeight: font.weights.semibold,
+                  color: colors.textSecondary,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Live Signals
+              </span>
+              <LiveDot frame={frame} />
+            </div>
 
-          {/* Signal rows */}
-          <div
-            style={{
-              padding: '10px 12px',
-              overflow: 'hidden',
-              flex: 1,
-            }}
-          >
-            {signals.map((signal, i) => (
-              <SignalRow
-                key={i}
-                frame={frame}
-                emoji={signal.emoji}
-                company={signal.company}
-                text={signal.text}
-                sub={signal.sub}
-                index={i}
-                isHighlighted={i === 7 && frame >= 85}
-              />
-            ))}
-          </div>
-        </div>
+            {/* Signal cards grid - 3 columns */}
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 12,
+                justifyContent: 'center',
+                maxWidth: 1100,
+              }}
+            >
+              {signals.map((signal, i) => {
+                const startFrame = i * 12;
+                const opacity = interpolate(frame, [startFrame, startFrame + 8], [0, 1], {
+                  extrapolateLeft: 'clamp',
+                  extrapolateRight: 'clamp',
+                });
+                const translateY = interpolate(frame, [startFrame, startFrame + 10], [15, 0], {
+                  extrapolateLeft: 'clamp',
+                  extrapolateRight: 'clamp',
+                });
 
-        {/* Right Panel — beat content */}
-        <div
-          style={{
-            flex: 1,
-            background: colors.background,
-            overflow: 'hidden',
-            position: 'relative',
-          }}
-        >
-          {beat === 1 && <Beat1Signals frame={frame} />}
-          {beat === 2 && <Beat2Research frame={frame} />}
-          {beat === 3 && <Beat3Outreach frame={frame} />}
-          {beat === 4 && <Beat4CRM frame={frame} />}
-          {beat === 5 && <Beat5Memo frame={frame} />}
-        </div>
+                if (frame < startFrame) return null;
+
+                const isHighlighted = i === 7 && frame >= 100;
+
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      width: 340,
+                      padding: '12px 14px',
+                      borderRadius: 8,
+                      border: `1px solid ${isHighlighted ? colors.blue : colors.border}`,
+                      borderLeft: isHighlighted ? `3px solid ${colors.blue}` : `1px solid ${colors.border}`,
+                      background: isHighlighted ? '#F0F4FF' : colors.card,
+                      opacity,
+                      transform: `translateY(${translateY}px)`,
+                      position: 'relative',
+                    }}
+                  >
+                    <div style={{ fontSize: font.sizes.body, color: colors.textPrimary, lineHeight: 1.4 }}>
+                      {signal.emoji} <strong>{signal.company}</strong>
+                      {signal.text ? ` — ${signal.text}` : ''}
+                    </div>
+                    {signal.sub && (
+                      <div style={{ fontSize: font.sizes.label, color: colors.textSecondary, marginTop: 3 }}>
+                        {signal.sub}
+                      </div>
+                    )}
+                    {isHighlighted && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          fontSize: font.sizes.label,
+                          fontWeight: font.weights.bold,
+                          color: colors.orange,
+                          background: '#FFF7ED',
+                          border: `1px solid ${colors.orange}`,
+                          borderRadius: 4,
+                          padding: '2px 6px',
+                        }}
+                      >
+                        96
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Beat 2: Desk Research */}
+        {beat === 2 && <Beat2Research frame={frame} beatStartFrame={BEAT_1_END} />}
+
+        {/* Beat 3: Outreach */}
+        {beat === 3 && <Beat3Outreach frame={frame} beatStartFrame={BEAT_2_END} />}
+
+        {/* Beat 4: Update CRM */}
+        {beat === 4 && <Beat4CRM frame={frame} beatStartFrame={BEAT_3_END} />}
+
+        {/* Beat 5: Memo Sent */}
+        {beat === 5 && <Beat5Memo frame={frame} beatStartFrame={BEAT_4_END} />}
       </div>
     </AbsoluteFill>
   );

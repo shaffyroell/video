@@ -4,33 +4,33 @@ import { colors, font, motion } from '../tokens';
 
 interface Beat4CRMProps {
   frame: number;
+  beatStartFrame: number;
 }
 
-const ENTER_FRAME = 368;
-const ANIMATE_FRAME = 370;
-
 const crmRows = [
-  { contact: 'Elena Marsh', status: 'REPLIED', signalSource: 'Website visit · 2x', timestamp: 'Yesterday, 14:22', isJames: false },
+  { contact: 'Elena Marsh', status: 'REPLIED', signalSource: 'Website visit · 2x', timestamp: 'Yesterday', isJames: false },
   { contact: 'James Vance', status: 'NEW', signalSource: '', timestamp: 'Today, 09:41', isJames: true },
-  { contact: 'Tom Aldridge', status: 'IN SEQUENCE', signalSource: 'LinkedIn follow', timestamp: 'Nov 21, 11:05', isJames: false },
+  { contact: 'Tom Aldridge', status: 'IN SEQUENCE', signalSource: 'LinkedIn follow', timestamp: 'Nov 21', isJames: false },
 ];
 
-export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
-  const cardOpacity = interpolate(frame, [ENTER_FRAME, ENTER_FRAME + 8], [0, 1], {
+export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame, beatStartFrame }) => {
+  const localFrame = frame - beatStartFrame;
+
+  const cardOpacity = interpolate(localFrame, [0, 10], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
   const cardTranslateY = spring({
-    frame: frame - ENTER_FRAME,
+    frame: localFrame,
     fps: 30,
     config: motion.springConfig,
-    from: 12,
+    from: 20,
     to: 0,
   });
 
-  // James row animation
-  const jamesStatusProgress = interpolate(frame, [ANIMATE_FRAME, ANIMATE_FRAME + 10], [0, 1], {
+  // James row animations
+  const jamesStatusProgress = interpolate(localFrame, [15, 30], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -38,13 +38,13 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
   const jamesPillBg = `rgb(${Math.round(229 - 10 * jamesStatusProgress)}, ${Math.round(229 + 5 * jamesStatusProgress)}, ${Math.round(229 + 25 * jamesStatusProgress)})`;
 
   const jamesSignalChars = Math.floor(
-    interpolate(frame, [ANIMATE_FRAME + 2, ANIMATE_FRAME + 22], [0, 22], {
+    interpolate(localFrame, [20, 40], [0, 22], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
   );
 
-  const jamesTimestampOpacity = interpolate(frame, [ANIMATE_FRAME + 10, ANIMATE_FRAME + 20], [0, 1], {
+  const confirmOpacity = interpolate(localFrame, [45, 55], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -52,10 +52,11 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
   return (
     <div
       style={{
-        padding: 28,
-        height: '100%',
+        flex: 1,
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 40,
         opacity: cardOpacity,
         transform: `translateY(${cardTranslateY}px)`,
       }}
@@ -64,16 +65,28 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
         style={{
           background: colors.card,
           border: `1px solid ${colors.border}`,
-          borderRadius: 8,
+          borderRadius: 12,
           width: '100%',
+          maxWidth: 800,
           overflow: 'hidden',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
         }}
       >
+        {/* Header */}
+        <div style={{ padding: '20px 24px', borderBottom: `1px solid ${colors.border}` }}>
+          <div style={{ fontSize: 11, color: colors.textSecondary, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>
+            CRM Update
+          </div>
+          <div style={{ fontSize: 18, fontWeight: font.weights.semibold, color: colors.textPrimary }}>
+            Adding James Vance to pipeline
+          </div>
+        </div>
+
         {/* Table Header */}
         <div
           style={{
             display: 'flex',
-            padding: '10px 16px',
+            padding: '12px 24px',
             borderBottom: `1px solid ${colors.border}`,
             background: '#FAFAFA',
           }}
@@ -98,14 +111,13 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
         {/* Rows */}
         {crmRows.map((row, idx) => {
           const isJames = row.isJames;
-          const rowOpacity = isJames ? 1 : 0.4;
-          const statusText = isJames && frame >= ANIMATE_FRAME + 5 ? 'IN SEQUENCE' : row.status;
+          const rowOpacity = isJames ? 1 : 0.5;
+          const statusText = isJames && localFrame >= 20 ? 'IN SEQUENCE' : row.status;
           const statusBg = isJames ? jamesPillBg : '#E5E5E5';
-          const statusColor = isJames && frame >= ANIMATE_FRAME + 5 ? colors.blue : colors.textSecondary;
+          const statusColor = isJames && localFrame >= 20 ? colors.blue : colors.textSecondary;
           const signalSource = isJames
             ? 'Stealth Mode detected'.slice(0, jamesSignalChars)
             : row.signalSource;
-          const timestampOpacity = isJames ? jamesTimestampOpacity : 1;
 
           return (
             <div
@@ -113,7 +125,7 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                padding: '12px 16px',
+                padding: '14px 24px',
                 borderBottom: idx < crmRows.length - 1 ? `1px solid ${colors.border}` : 'none',
                 opacity: rowOpacity,
                 background: isJames ? '#FAFEFF' : 'transparent',
@@ -122,7 +134,7 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
               <div
                 style={{
                   flex: 2,
-                  fontSize: font.sizes.body,
+                  fontSize: font.sizes.card,
                   fontWeight: isJames ? font.weights.semibold : font.weights.regular,
                   color: colors.textPrimary,
                 }}
@@ -137,35 +149,37 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame }) => {
                     color: statusColor,
                     background: statusBg,
                     borderRadius: 4,
-                    padding: '2px 8px',
+                    padding: '3px 10px',
                   }}
                 >
                   {statusText}
                 </span>
               </div>
-              <div
-                style={{
-                  flex: 2,
-                  fontSize: font.sizes.small,
-                  color: colors.textSecondary,
-                }}
-              >
+              <div style={{ flex: 2, fontSize: font.sizes.small, color: colors.textSecondary }}>
                 {signalSource}
               </div>
-              <div
-                style={{
-                  flex: 1,
-                  fontSize: font.sizes.small,
-                  color: colors.textSecondary,
-                  textAlign: 'right',
-                  opacity: timestampOpacity,
-                }}
-              >
+              <div style={{ flex: 1, fontSize: font.sizes.small, color: colors.textSecondary, textAlign: 'right' }}>
                 {row.timestamp}
               </div>
             </div>
           );
         })}
+
+        {/* Confirmation */}
+        {localFrame >= 45 && (
+          <div
+            style={{
+              padding: '16px 24px',
+              borderTop: `1px solid ${colors.border}`,
+              background: '#F0FDF4',
+              opacity: confirmOpacity,
+            }}
+          >
+            <span style={{ color: colors.green, fontWeight: font.weights.medium, fontSize: font.sizes.body }}>
+              ✓ Contact synced to CRM
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

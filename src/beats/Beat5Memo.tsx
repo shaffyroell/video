@@ -5,40 +5,28 @@ import { memoSections } from '../data/signals';
 
 interface Beat5MemoProps {
   frame: number;
+  beatStartFrame: number;
 }
 
-const ENTER_FRAME = 428;
 const TALKING_POINTS_TEXT = memoSections[3].text;
 
-export const Beat5Memo: React.FC<Beat5MemoProps> = ({ frame }) => {
-  const cardOpacity = interpolate(frame, [ENTER_FRAME, ENTER_FRAME + 8], [0, 1], {
+export const Beat5Memo: React.FC<Beat5MemoProps> = ({ frame, beatStartFrame }) => {
+  const localFrame = frame - beatStartFrame;
+
+  const cardOpacity = interpolate(localFrame, [0, 10], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
   const cardTranslateY = spring({
-    frame: frame - ENTER_FRAME,
+    frame: localFrame,
     fps: 30,
     config: motion.springConfig,
-    from: 12,
+    from: 20,
     to: 0,
   });
 
-  function sectionOpacity(startFrame: number) {
-    return interpolate(frame, [startFrame, startFrame + 10], [0, 1], {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp',
-    });
-  }
-
-  const talkingPointsChars = Math.floor(
-    interpolate(frame, [490, 490 + TALKING_POINTS_TEXT.length * 2], [0, TALKING_POINTS_TEXT.length], {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp',
-    })
-  );
-
-  const confirmOpacity = interpolate(frame, [525, 535], [0, 1], {
+  const confirmOpacity = interpolate(localFrame, [45, 55], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -52,10 +40,11 @@ export const Beat5Memo: React.FC<Beat5MemoProps> = ({ frame }) => {
   return (
     <div
       style={{
-        padding: 28,
-        height: '100%',
+        flex: 1,
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 40,
         opacity: cardOpacity,
         transform: `translateY(${cardTranslateY}px)`,
       }}
@@ -64,84 +53,34 @@ export const Beat5Memo: React.FC<Beat5MemoProps> = ({ frame }) => {
         style={{
           background: '#FFFFFF',
           border: `1px solid #E5E5E5`,
-          borderRadius: 8,
-          padding: 28,
+          borderRadius: 12,
+          padding: 32,
           maxWidth: 600,
           width: '100%',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
         }}
       >
-        {/* BRIEFING NOTE label */}
-        <div
-          style={{
-            fontSize: font.sizes.label,
-            fontWeight: font.weights.semibold,
-            color: colors.textSecondary,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            marginBottom: 6,
-            opacity: sectionOpacity(430),
-          }}
-        >
-          Briefing Note
-        </div>
-
-        {/* Name + Date */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            marginBottom: 12,
-            opacity: sectionOpacity(435),
-          }}
-        >
-          <div
-            style={{
-              fontSize: font.sizes.memo,
-              fontWeight: font.weights.bold,
-              color: colors.textPrimary,
-            }}
-          >
-            James Vance
+        {/* Header */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, color: colors.textSecondary, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>
+            Briefing Note Generated
           </div>
-          <div style={{ fontSize: font.sizes.small, color: colors.textSecondary }}>
-            {today}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+            <div style={{ fontSize: 22, fontWeight: font.weights.bold, color: colors.textPrimary }}>
+              James Vance
+            </div>
+            <div style={{ fontSize: font.sizes.small, color: colors.textSecondary }}>
+              {today}
+            </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div
-          style={{
-            height: 1,
-            background: colors.border,
-            marginBottom: 16,
-            opacity: sectionOpacity(440),
-          }}
-        />
+        <div style={{ height: 1, background: colors.border, marginBottom: 20 }} />
 
         {/* Sections */}
-        {[
-          { label: memoSections[0].label, text: memoSections[0].text, startFrame: 445 },
-          { label: memoSections[1].label, text: memoSections[1].text, startFrame: 460 },
-          { label: memoSections[2].label, text: memoSections[2].text, startFrame: 475 },
-        ].map((section, i) => (
-          <div
-            key={i}
-            style={{
-              marginBottom: 14,
-              opacity: sectionOpacity(section.startFrame),
-            }}
-          >
-            <div
-              style={{
-                fontSize: font.sizes.label,
-                fontWeight: font.weights.semibold,
-                color: colors.textSecondary,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                marginBottom: 3,
-              }}
-            >
+        {memoSections.slice(0, 3).map((section, i) => (
+          <div key={i} style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: font.sizes.label, fontWeight: font.weights.semibold, color: colors.textSecondary, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
               {section.label}
             </div>
             <div style={{ fontSize: font.sizes.body, color: colors.textPrimary, lineHeight: 1.5 }}>
@@ -150,39 +89,31 @@ export const Beat5Memo: React.FC<Beat5MemoProps> = ({ frame }) => {
           </div>
         ))}
 
-        {/* Talking Points — typewriter */}
-        {frame >= 490 && (
-          <div style={{ marginBottom: 14 }}>
-            <div
-              style={{
-                fontSize: font.sizes.label,
-                fontWeight: font.weights.semibold,
-                color: colors.textSecondary,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                marginBottom: 3,
-              }}
-            >
-              {memoSections[3].label}
-            </div>
-            <div style={{ fontSize: font.sizes.body, color: colors.textPrimary, lineHeight: 1.5 }}>
-              {TALKING_POINTS_TEXT.slice(0, talkingPointsChars)}
-              <span style={{ opacity: 0.4 }}>|</span>
-            </div>
+        {/* Talking Points */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: font.sizes.label, fontWeight: font.weights.semibold, color: colors.textSecondary, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+            {memoSections[3].label}
           </div>
-        )}
+          <div style={{ fontSize: font.sizes.body, color: colors.textPrimary, lineHeight: 1.5 }}>
+            {TALKING_POINTS_TEXT}
+          </div>
+        </div>
 
         {/* Confirmation */}
-        {frame >= 525 && (
+        {localFrame >= 30 && (
           <div
             style={{
-              color: colors.green,
-              fontSize: font.sizes.small,
-              marginTop: 16,
+              marginTop: 20,
+              padding: '12px 16px',
+              background: '#F0FDF4',
+              borderRadius: 8,
+              border: `1px solid ${colors.green}`,
               opacity: confirmOpacity,
             }}
           >
-            ✓ Memo sent to shaffy@techtower.ai
+            <span style={{ color: colors.green, fontWeight: font.weights.medium, fontSize: font.sizes.body }}>
+              ✓ Memo sent to shaffy@techtower.ai
+            </span>
           </div>
         )}
       </div>
