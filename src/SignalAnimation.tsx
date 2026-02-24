@@ -13,22 +13,22 @@ export const signalAnimationSchema = z.object({
   backgroundColor: z.string().default('#F5F5F5'),
 });
 
-// Beat frame boundaries
-const BEAT_1_END = 180;   // Signals come in + highlight sequence
-const BEAT_2_END = 300;   // Desk Research
-const BEAT_3_END = 420;   // Outreach
-const BEAT_4_END = 480;   // Update CRM
-// Beat 5: 480 - 540      // Memo sent
+// Beat frame boundaries - SLOWER pacing
+const BEAT_1_END = 240;   // Signals highlight sequence (8s)
+const BEAT_2_END = 420;   // Desk Research (6s)
+const BEAT_3_END = 580;   // Outreach (5.3s)
+const BEAT_4_END = 660;   // Update CRM (2.7s)
+// Beat 5: 660 - 780      // Memo sent (4s)
 
 // Steps for indicator
 const STEPS = ['Signals', 'Desk Research', 'Outreach', 'Update CRM', 'Memo Sent'];
 
-// Typing animation config - FASTER
+// Typing animation config
 const WORDS = ['clients', 'angels/LPs', 'new investments', 'candidates'];
-const FRAMES_PER_CYCLE = 75;  // Faster cycling
-const TYPE_SPEED = 2;         // Faster typing
-const DELETE_SPEED = 1;       // Faster deleting
-const HOLD_FRAMES = 35;       // Shorter hold
+const FRAMES_PER_CYCLE = 90;
+const TYPE_SPEED = 2;
+const DELETE_SPEED = 1;
+const HOLD_FRAMES = 45;
 
 function getTypedWord(frame: number): string {
   const totalCycles = FRAMES_PER_CYCLE * WORDS.length;
@@ -78,16 +78,11 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
 
   const HEADER_HEIGHT = 62;
 
-  // Signal cards timing
-  const CARD_APPEAR_INTERVAL = 12;
-  const ALL_CARDS_DONE = signals.length * CARD_APPEAR_INTERVAL;
-  const HIGHLIGHT_START = ALL_CARDS_DONE + 10;
-  const HIGHLIGHT_INTERVAL = 8;
-
-  // Calculate which card is currently highlighted (cycles through them)
-  const highlightIndex = frame >= HIGHLIGHT_START
-    ? Math.floor((frame - HIGHLIGHT_START) / HIGHLIGHT_INTERVAL) % signals.length
-    : -1;
+  // Highlight timing - SLOWER, one card every 24 frames (0.8s per card)
+  const HIGHLIGHT_INTERVAL = 24;
+  const highlightIndex = Math.floor(frame / HIGHLIGHT_INTERVAL) % signals.length;
+  // After cycling through once, stick on James Vance (index 7)
+  const finalHighlightIndex = frame >= HIGHLIGHT_INTERVAL * signals.length ? 7 : highlightIndex;
 
   return (
     <AbsoluteFill style={{ background: backgroundColor || colors.background, fontFamily: 'Inter, sans-serif' }}>
@@ -128,7 +123,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
                 background: colors.blue,
                 marginLeft: 2,
                 verticalAlign: 'middle',
-                opacity: Math.round(frame / 12) % 2 === 0 ? 1 : 0,
+                opacity: Math.round(frame / 15) % 2 === 0 ? 1 : 0,
               }}
             />
           </span>
@@ -190,7 +185,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
           overflow: 'hidden',
         }}
       >
-        {/* Beat 1: Signals - vertical centered list */}
+        {/* Beat 1: Signals - ALL visible from start, highlight one by one */}
         {beat === 1 && (
           <div
             style={{
@@ -225,7 +220,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
               <LiveDot frame={frame} />
             </div>
 
-            {/* Signal cards - vertical, one per row */}
+            {/* Signal cards - ALL visible from start */}
             <div
               style={{
                 display: 'flex',
@@ -237,20 +232,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
               }}
             >
               {signals.map((signal, i) => {
-                const startFrame = i * CARD_APPEAR_INTERVAL;
-                const opacity = interpolate(frame, [startFrame, startFrame + 8], [0, 1], {
-                  extrapolateLeft: 'clamp',
-                  extrapolateRight: 'clamp',
-                });
-                const translateY = interpolate(frame, [startFrame, startFrame + 10], [12, 0], {
-                  extrapolateLeft: 'clamp',
-                  extrapolateRight: 'clamp',
-                });
-
-                if (frame < startFrame) return null;
-
-                // Highlight current card in sequence, or last card (James Vance) stays highlighted
-                const isHighlighted = highlightIndex === i || (i === 7 && highlightIndex >= 7);
+                const isHighlighted = finalHighlightIndex === i;
 
                 return (
                   <div
@@ -262,10 +244,10 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
                       border: `1px solid ${isHighlighted ? colors.blue : colors.border}`,
                       borderLeft: isHighlighted ? `3px solid ${colors.blue}` : `1px solid ${colors.border}`,
                       background: isHighlighted ? '#F0F4FF' : colors.card,
-                      opacity: isHighlighted ? 1 : opacity * 0.7,
-                      transform: `translateY(${translateY}px) scale(${isHighlighted ? 1.02 : 1})`,
+                      opacity: isHighlighted ? 1 : 0.6,
+                      transform: `scale(${isHighlighted ? 1.02 : 1})`,
                       position: 'relative',
-                      transition: 'transform 0.1s ease, opacity 0.1s ease',
+                      transition: 'all 0.2s ease',
                     }}
                   >
                     <div style={{ fontSize: font.sizes.body, color: colors.textPrimary, lineHeight: 1.4 }}>

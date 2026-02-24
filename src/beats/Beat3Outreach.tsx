@@ -20,7 +20,7 @@ const outreachSteps = [
 export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFrame }) => {
   const localFrame = frame - beatStartFrame;
 
-  const cardOpacity = interpolate(localFrame, [0, 10], [0, 1], {
+  const cardOpacity = interpolate(localFrame, [0, 15], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -33,17 +33,17 @@ export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFr
     to: 0,
   });
 
-  // Email typing starts after outreach steps complete
-  const EMAIL_TYPE_START = 70;
+  // Email typing - SLOWER, starts after steps, 2 frames per character
+  const EMAIL_TYPE_START = 80;
   const emailChars = Math.floor(
-    interpolate(localFrame, [EMAIL_TYPE_START, EMAIL_TYPE_START + PERSONALIZED_EMAIL.length * 1.2], [0, PERSONALIZED_EMAIL.length], {
+    interpolate(localFrame, [EMAIL_TYPE_START, EMAIL_TYPE_START + PERSONALIZED_EMAIL.length * 2], [0, PERSONALIZED_EMAIL.length], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
   );
 
   const emailDone = emailChars >= PERSONALIZED_EMAIL.length;
-  const sentConfirmOpacity = interpolate(localFrame, [EMAIL_TYPE_START + PERSONALIZED_EMAIL.length * 1.2 + 5, EMAIL_TYPE_START + PERSONALIZED_EMAIL.length * 1.2 + 15], [0, 1], {
+  const sentConfirmOpacity = interpolate(localFrame, [EMAIL_TYPE_START + PERSONALIZED_EMAIL.length * 2 + 10, EMAIL_TYPE_START + PERSONALIZED_EMAIL.length * 2 + 25], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -83,21 +83,21 @@ export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFr
 
         <div style={{ height: 1, background: colors.border, marginBottom: 24 }} />
 
-        {/* Outreach Steps */}
+        {/* Outreach Steps - SLOWER: 22 frames per step */}
         <div style={{ marginBottom: 20 }}>
           {outreachSteps.map((step, i) => {
-            const stepStartFrame = beatStartFrame + 15 + i * 16;
+            const stepStartFrame = beatStartFrame + 20 + i * 22;
             const isStarted = frame >= stepStartFrame;
-            const isComplete = frame >= stepStartFrame + 12;
+            const isComplete = frame >= stepStartFrame + 18;
 
             if (!isStarted) return null;
 
-            const rowOpacity = interpolate(frame, [stepStartFrame, stepStartFrame + 6], [0, 1], {
+            const rowOpacity = interpolate(frame, [stepStartFrame, stepStartFrame + 8], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
             });
 
-            const checkOpacity = interpolate(frame, [stepStartFrame + 12, stepStartFrame + 18], [0, 1], {
+            const checkOpacity = interpolate(frame, [stepStartFrame + 18, stepStartFrame + 24], [0, 1], {
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
             });
@@ -109,21 +109,25 @@ export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFr
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  marginBottom: 12,
+                  marginBottom: 14,
                   opacity: rowOpacity,
+                  padding: '8px 12px',
+                  borderRadius: 8,
+                  background: !isComplete ? '#FAFAFA' : 'transparent',
+                  border: !isComplete ? `1px solid ${colors.border}` : '1px solid transparent',
                 }}
               >
                 {/* Icon */}
                 <div
                   style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 6,
-                    background: '#F3F4F6',
+                    width: 36,
+                    height: 36,
+                    borderRadius: 8,
+                    background: isComplete ? '#ECFDF5' : '#F3F4F6',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 16,
+                    fontSize: 18,
                     flexShrink: 0,
                   }}
                 >
@@ -131,18 +135,24 @@ export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFr
                 </div>
 
                 {/* Status */}
-                <div style={{ opacity: isComplete ? checkOpacity : 1, flexShrink: 0 }}>
-                  {isComplete ? <Checkmark size={16} /> : <Spinner frame={frame} size={16} />}
+                <div style={{ flexShrink: 0, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {isComplete ? (
+                    <div style={{ opacity: checkOpacity }}>
+                      <Checkmark size={18} />
+                    </div>
+                  ) : (
+                    <Spinner frame={frame} size={18} />
+                  )}
                 </div>
 
                 {/* Label */}
                 <div style={{ flex: 1 }}>
                   <span
                     style={{
-                      fontSize: font.sizes.label,
+                      fontSize: font.sizes.small,
                       fontWeight: font.weights.semibold,
-                      color: colors.textSecondary,
-                      letterSpacing: '0.08em',
+                      color: isComplete ? colors.textPrimary : colors.textSecondary,
+                      letterSpacing: '0.05em',
                     }}
                   >
                     {step.label}
@@ -151,7 +161,7 @@ export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFr
                     <span
                       style={{
                         fontSize: font.sizes.small,
-                        color: colors.textPrimary,
+                        color: colors.textSecondary,
                         marginLeft: 10,
                         opacity: checkOpacity,
                       }}
@@ -165,7 +175,7 @@ export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFr
           })}
         </div>
 
-        {/* Email Preview - Typewriter */}
+        {/* Email Preview - SLOWER Typewriter */}
         {localFrame >= EMAIL_TYPE_START && (
           <div
             style={{
@@ -176,38 +186,42 @@ export const Beat3Outreach: React.FC<Beat3OutreachProps> = ({ frame, beatStartFr
               marginTop: 8,
             }}
           >
-            <div style={{ fontSize: font.sizes.label, color: colors.textSecondary, marginBottom: 8 }}>
+            <div style={{ fontSize: font.sizes.label, color: colors.textSecondary, marginBottom: 10 }}>
               📧 Email Preview
             </div>
             <div
               style={{
                 fontSize: font.sizes.body,
                 color: colors.textPrimary,
-                lineHeight: 1.6,
-                fontStyle: 'italic',
+                lineHeight: 1.7,
               }}
             >
-              "{PERSONALIZED_EMAIL.slice(0, emailChars)}
-              {!emailDone && <span style={{ opacity: 0.5 }}>|</span>}
-              {emailDone && '"'}
+              <span style={{ fontStyle: 'italic' }}>
+                "{PERSONALIZED_EMAIL.slice(0, emailChars)}
+              </span>
+              {!emailDone && <span style={{ opacity: 0.5, fontWeight: 'bold' }}>|</span>}
+              {emailDone && <span style={{ fontStyle: 'italic' }}>"</span>}
             </div>
 
             {/* Sent confirmation */}
             {emailDone && (
               <div
                 style={{
-                  marginTop: 12,
+                  marginTop: 14,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 6,
+                  gap: 8,
                   opacity: sentConfirmOpacity,
+                  padding: '8px 12px',
+                  background: '#F0FDF4',
+                  borderRadius: 6,
                 }}
               >
-                <span style={{ color: colors.green, fontSize: font.sizes.small, fontWeight: font.weights.medium }}>
+                <span style={{ color: colors.green, fontSize: font.sizes.body, fontWeight: font.weights.semibold }}>
                   ✓ Sent
                 </span>
                 <span style={{ color: colors.textSecondary, fontSize: font.sizes.small }}>
-                  · Queued follow-up in 4 days
+                  · Follow-up queued in 4 days
                 </span>
               </div>
             )}
