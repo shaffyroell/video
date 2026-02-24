@@ -3,7 +3,6 @@ import { AbsoluteFill, useCurrentFrame, interpolate } from 'remotion';
 import { z } from 'zod';
 import { colors, font } from './tokens';
 import { signals } from './data/signals';
-import { SignalRow } from './components/SignalRow';
 import { LiveDot } from './components/LiveDot';
 import { Beat2Research } from './beats/Beat2Research';
 import { Beat3Outreach } from './beats/Beat3Outreach';
@@ -14,8 +13,8 @@ export const signalAnimationSchema = z.object({
   backgroundColor: z.string().default('#F5F5F5'),
 });
 
-// Beat frame boundaries - extended for better pacing
-const BEAT_1_END = 180;   // Signals come in + pause to view
+// Beat frame boundaries
+const BEAT_1_END = 180;   // Signals come in + highlight sequence
 const BEAT_2_END = 300;   // Desk Research
 const BEAT_3_END = 420;   // Outreach
 const BEAT_4_END = 480;   // Update CRM
@@ -24,12 +23,12 @@ const BEAT_4_END = 480;   // Update CRM
 // Steps for indicator
 const STEPS = ['Signals', 'Desk Research', 'Outreach', 'Update CRM', 'Memo Sent'];
 
-// Typing animation config
+// Typing animation config - FASTER
 const WORDS = ['clients', 'angels/LPs', 'new investments', 'candidates'];
-const FRAMES_PER_CYCLE = 135;
-const TYPE_SPEED = 3;
-const DELETE_SPEED = 2;
-const HOLD_FRAMES = 65;
+const FRAMES_PER_CYCLE = 75;  // Faster cycling
+const TYPE_SPEED = 2;         // Faster typing
+const DELETE_SPEED = 1;       // Faster deleting
+const HOLD_FRAMES = 35;       // Shorter hold
 
 function getTypedWord(frame: number): string {
   const totalCycles = FRAMES_PER_CYCLE * WORDS.length;
@@ -79,6 +78,17 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
 
   const HEADER_HEIGHT = 62;
 
+  // Signal cards timing
+  const CARD_APPEAR_INTERVAL = 12;
+  const ALL_CARDS_DONE = signals.length * CARD_APPEAR_INTERVAL;
+  const HIGHLIGHT_START = ALL_CARDS_DONE + 10;
+  const HIGHLIGHT_INTERVAL = 8;
+
+  // Calculate which card is currently highlighted (cycles through them)
+  const highlightIndex = frame >= HIGHLIGHT_START
+    ? Math.floor((frame - HIGHLIGHT_START) / HIGHLIGHT_INTERVAL) % signals.length
+    : -1;
+
   return (
     <AbsoluteFill style={{ background: backgroundColor || colors.background, fontFamily: 'Inter, sans-serif' }}>
       {/* Header */}
@@ -97,7 +107,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
         {/* Centered title text */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span style={{ fontSize: 20, fontWeight: font.weights.semibold, color: colors.textPrimary }}>
-            Systems to find{' '}
+            Systems to find
           </span>
           <span
             style={{
@@ -106,6 +116,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
               color: colors.blue,
               minWidth: 180,
               display: 'inline-block',
+              marginLeft: 8,
             }}
           >
             {typedWord}
@@ -117,7 +128,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
                 background: colors.blue,
                 marginLeft: 2,
                 verticalAlign: 'middle',
-                opacity: Math.round(frame / 15) % 2 === 0 ? 1 : 0,
+                opacity: Math.round(frame / 12) % 2 === 0 ? 1 : 0,
               }}
             />
           </span>
@@ -179,7 +190,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
           overflow: 'hidden',
         }}
       >
-        {/* Beat 1: Signals */}
+        {/* Beat 1: Signals - vertical centered list */}
         {beat === 1 && (
           <div
             style={{
@@ -187,7 +198,8 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              padding: '20px 40px',
+              padding: '16px 40px',
+              overflowY: 'auto',
             }}
           >
             {/* Signals header */}
@@ -196,7 +208,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
-                marginBottom: 16,
+                marginBottom: 12,
               }}
             >
               <span
@@ -213,44 +225,47 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
               <LiveDot frame={frame} />
             </div>
 
-            {/* Signal cards grid - 3 columns */}
+            {/* Signal cards - vertical, one per row */}
             <div
               style={{
                 display: 'flex',
-                flexWrap: 'wrap',
-                gap: 12,
-                justifyContent: 'center',
-                maxWidth: 1100,
+                flexDirection: 'column',
+                gap: 8,
+                width: '100%',
+                maxWidth: 600,
+                alignItems: 'center',
               }}
             >
               {signals.map((signal, i) => {
-                const startFrame = i * 12;
+                const startFrame = i * CARD_APPEAR_INTERVAL;
                 const opacity = interpolate(frame, [startFrame, startFrame + 8], [0, 1], {
                   extrapolateLeft: 'clamp',
                   extrapolateRight: 'clamp',
                 });
-                const translateY = interpolate(frame, [startFrame, startFrame + 10], [15, 0], {
+                const translateY = interpolate(frame, [startFrame, startFrame + 10], [12, 0], {
                   extrapolateLeft: 'clamp',
                   extrapolateRight: 'clamp',
                 });
 
                 if (frame < startFrame) return null;
 
-                const isHighlighted = i === 7 && frame >= 100;
+                // Highlight current card in sequence, or last card (James Vance) stays highlighted
+                const isHighlighted = highlightIndex === i || (i === 7 && highlightIndex >= 7);
 
                 return (
                   <div
                     key={i}
                     style={{
-                      width: 340,
-                      padding: '12px 14px',
+                      width: '100%',
+                      padding: '10px 14px',
                       borderRadius: 8,
                       border: `1px solid ${isHighlighted ? colors.blue : colors.border}`,
                       borderLeft: isHighlighted ? `3px solid ${colors.blue}` : `1px solid ${colors.border}`,
                       background: isHighlighted ? '#F0F4FF' : colors.card,
-                      opacity,
-                      transform: `translateY(${translateY}px)`,
+                      opacity: isHighlighted ? 1 : opacity * 0.7,
+                      transform: `translateY(${translateY}px) scale(${isHighlighted ? 1.02 : 1})`,
                       position: 'relative',
+                      transition: 'transform 0.1s ease, opacity 0.1s ease',
                     }}
                   >
                     <div style={{ fontSize: font.sizes.body, color: colors.textPrimary, lineHeight: 1.4 }}>
@@ -258,11 +273,11 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
                       {signal.text ? ` — ${signal.text}` : ''}
                     </div>
                     {signal.sub && (
-                      <div style={{ fontSize: font.sizes.label, color: colors.textSecondary, marginTop: 3 }}>
+                      <div style={{ fontSize: font.sizes.label, color: colors.textSecondary, marginTop: 2 }}>
                         {signal.sub}
                       </div>
                     )}
-                    {isHighlighted && (
+                    {isHighlighted && i === 7 && (
                       <div
                         style={{
                           position: 'absolute',
