@@ -3,6 +3,7 @@ import { HelloWorld, myCompSchema } from "./HelloWorld";
 import { Logo, myCompSchema2 } from "./HelloWorld/Logo";
 import { TechTower, techTowerSchema } from "./TechTower";
 import { StartupOutreach, startupOutreachSchema } from "./StartupOutreach";
+import { SignalAnimation, signalAnimationSchema } from "./SignalAnimation";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -69,6 +70,20 @@ export const RemotionRoot: React.FC = () => {
         schema={startupOutreachSchema}
         defaultProps={{
           backgroundColor: "#f8fafc",
+        }}
+      />
+
+      {/* SignalAnimation - 18s signal intelligence demo (1200x675) */}
+      <Composition
+        id="SignalAnimation"
+        component={SignalAnimation}
+        durationInFrames={540}
+        fps={30}
+        width={1200}
+        height={675}
+        schema={signalAnimationSchema}
+        defaultProps={{
+          backgroundColor: "#F5F5F5",
         }}
       />
     </>
