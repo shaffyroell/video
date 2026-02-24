@@ -13,10 +13,17 @@ const crmRows = [
   { contact: 'Tom Aldridge', status: 'IN SEQUENCE', signalSource: 'LinkedIn follow', timestamp: 'Nov 21', isJames: false },
 ];
 
+// CRM integrations
+const crmLogos = [
+  { name: 'Affinity', color: '#4F46E5', bg: '#EEF2FF' },
+  { name: 'Attio', color: '#0EA5E9', bg: '#F0F9FF' },
+  { name: 'HubSpot', color: '#F97316', bg: '#FFF7ED' },
+];
+
 export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame, beatStartFrame }) => {
   const localFrame = frame - beatStartFrame;
 
-  const cardOpacity = interpolate(localFrame, [0, 10], [0, 1], {
+  const cardOpacity = interpolate(localFrame, [0, 15], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -29,8 +36,8 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame, beatStartFrame }) => 
     to: 0,
   });
 
-  // James row animations
-  const jamesStatusProgress = interpolate(localFrame, [15, 30], [0, 1], {
+  // James row animations - SLOWER
+  const jamesStatusProgress = interpolate(localFrame, [30, 50], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -38,13 +45,13 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame, beatStartFrame }) => 
   const jamesPillBg = `rgb(${Math.round(229 - 10 * jamesStatusProgress)}, ${Math.round(229 + 5 * jamesStatusProgress)}, ${Math.round(229 + 25 * jamesStatusProgress)})`;
 
   const jamesSignalChars = Math.floor(
-    interpolate(localFrame, [20, 40], [0, 22], {
+    interpolate(localFrame, [40, 70], [0, 22], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
   );
 
-  const confirmOpacity = interpolate(localFrame, [45, 55], [0, 1], {
+  const confirmOpacity = interpolate(localFrame, [85, 100], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -72,13 +79,44 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame, beatStartFrame }) => 
           boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
         }}
       >
-        {/* Header */}
+        {/* Header with CRM logos */}
         <div style={{ padding: '20px 24px', borderBottom: `1px solid ${colors.border}` }}>
-          <div style={{ fontSize: 11, color: colors.textSecondary, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>
-            CRM Update
-          </div>
-          <div style={{ fontSize: 18, fontWeight: font.weights.semibold, color: colors.textPrimary }}>
-            Adding James Vance to pipeline
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <div style={{ fontSize: 11, color: colors.textSecondary, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>
+                CRM Update
+              </div>
+              <div style={{ fontSize: 18, fontWeight: font.weights.semibold, color: colors.textPrimary }}>
+                Adding James Vance to pipeline
+              </div>
+            </div>
+
+            {/* CRM Logos */}
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <span style={{ fontSize: font.sizes.label, color: colors.textSecondary, marginRight: 4 }}>Sync to:</span>
+              {crmLogos.map((crm, i) => {
+                const logoOpacity = interpolate(localFrame, [10 + i * 10, 18 + i * 10], [0, 1], {
+                  extrapolateLeft: 'clamp',
+                  extrapolateRight: 'clamp',
+                });
+                return (
+                  <div
+                    key={crm.name}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: 6,
+                      background: crm.bg,
+                      border: `1px solid ${crm.color}`,
+                      opacity: logoOpacity,
+                    }}
+                  >
+                    <span style={{ fontSize: 10, fontWeight: font.weights.semibold, color: crm.color }}>
+                      {crm.name}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -112,9 +150,9 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame, beatStartFrame }) => 
         {crmRows.map((row, idx) => {
           const isJames = row.isJames;
           const rowOpacity = isJames ? 1 : 0.5;
-          const statusText = isJames && localFrame >= 20 ? 'IN SEQUENCE' : row.status;
+          const statusText = isJames && localFrame >= 40 ? 'IN SEQUENCE' : row.status;
           const statusBg = isJames ? jamesPillBg : '#E5E5E5';
-          const statusColor = isJames && localFrame >= 20 ? colors.blue : colors.textSecondary;
+          const statusColor = isJames && localFrame >= 40 ? colors.blue : colors.textSecondary;
           const signalSource = isJames
             ? 'Stealth Mode detected'.slice(0, jamesSignalChars)
             : row.signalSource;
@@ -166,17 +204,23 @@ export const Beat4CRM: React.FC<Beat4CRMProps> = ({ frame, beatStartFrame }) => 
         })}
 
         {/* Confirmation */}
-        {localFrame >= 45 && (
+        {localFrame >= 80 && (
           <div
             style={{
               padding: '16px 24px',
               borderTop: `1px solid ${colors.border}`,
               background: '#F0FDF4',
               opacity: confirmOpacity,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
-            <span style={{ color: colors.green, fontWeight: font.weights.medium, fontSize: font.sizes.body }}>
-              ✓ Contact synced to CRM
+            <span style={{ color: colors.green, fontWeight: font.weights.semibold, fontSize: font.sizes.body }}>
+              ✓ Contact synced to Affinity, Attio, HubSpot
+            </span>
+            <span style={{ fontSize: font.sizes.small, color: colors.textSecondary }}>
+              3 CRMs updated
             </span>
           </div>
         )}

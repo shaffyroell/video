@@ -17,8 +17,8 @@ export const signalAnimationSchema = z.object({
 const BEAT_1_END = 240;   // Signals highlight sequence (8s)
 const BEAT_2_END = 420;   // Desk Research (6s)
 const BEAT_3_END = 580;   // Outreach (5.3s)
-const BEAT_4_END = 660;   // Update CRM (2.7s)
-// Beat 5: 660 - 780      // Memo sent (4s)
+const BEAT_4_END = 700;   // Update CRM (4s)
+// Beat 5: 700 - 820      // Memo sent (4s)
 
 // Steps for indicator
 const STEPS = ['Signals', 'Desk Research', 'Outreach', 'Update CRM', 'Memo Sent'];
