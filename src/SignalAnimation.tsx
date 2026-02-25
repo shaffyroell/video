@@ -326,7 +326,7 @@ export const SignalAnimation: React.FC<z.infer<typeof signalAnimationSchema>> = 
                       )}
 
                       {/* Fit score on James Vance card */}
-                      {isActive && i === 7 && (
+                      {isActive && i === 6 && (
                         <div
                           style={{
                             position: 'absolute',

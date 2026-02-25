@@ -73,11 +73,11 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
-      {/* SignalAnimation - ~39s signal intelligence demo (1200x675) */}
+      {/* SignalAnimation - ~37s signal intelligence demo (1200x675) */}
       <Composition
         id="SignalAnimation"
         component={SignalAnimation}
-        durationInFrames={1163}
+        durationInFrames={1118}
         fps={30}
         width={1200}
         height={675}

@@ -2,7 +2,6 @@ export const signals = [
   { emoji: '🌐', company: 'Acme Capital', text: 'visited your website 3x', sub: 'signs of interest' },
   { emoji: '👥', company: 'Northbridge VC', text: 'followed Clay on LinkedIn', sub: 'Forward thinking, may be looking to invest in AI tools' },
   { emoji: '💼', company: 'Atlas Group', text: 'posted Head of Sales on LinkedIn', sub: 'may invest in sales tools' },
-  { emoji: '📱', company: 'Peak Partners', text: "liked your competitor's post", sub: 'interested in the category' },
   { emoji: '👴', company: 'Founder of Helix Software', text: 'turned 65', sub: 'may be looking to retire' },
   { emoji: '⏱️', company: 'Sarah Mitchell', text: '2 years as CFO at Orbis Group', sub: 'may be open to something new' },
   { emoji: '🌱', company: 'Clarity Tech', text: 'raised Pre-Seed 12 months ago', sub: 'may raise soon' },
