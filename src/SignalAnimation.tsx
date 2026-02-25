@@ -18,11 +18,11 @@ const INTRO_END   = 75;   // Intro title (2.5s)
 
 // Beat 1 callout text (shown briefly before highlighting kicks in)
 const TEXT_IN_START  = INTRO_END + 8;   // 83  — slides in from right
-const TEXT_OUT_START = INTRO_END + 48;  // 123 — starts sliding out
-const TEXT_OUT_END   = INTRO_END + 68;  // 143 — fully gone
+const TEXT_OUT_START = INTRO_END + 78;  // 153 — starts sliding out (+1s hold)
+const TEXT_OUT_END   = INTRO_END + 98;  // 173 — fully gone
 
 // Beat 1 highlight cycle: 45 frames (1.5s) per card, all 9 shown exactly once
-const HIGHLIGHT_START    = INTRO_END + 73;  // 148
+const HIGHLIGHT_START    = INTRO_END + 103; // 178
 const HIGHLIGHT_INTERVAL = 45;              // frames per card
 const HIGHLIGHT_FADE     = 10;              // smooth fade-in/out frames
 
